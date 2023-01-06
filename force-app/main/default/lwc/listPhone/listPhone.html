@@ -1,0 +1,30 @@
+<template>
+   <lightning-card title="Manage Phone Quick Action">
+      <lightning-layout multiple-rows="true" vertical-align="end">
+         <div class="slds-m-around_medium">
+            <div class="slds-float_right">
+               <lightning-button label="Create" onclick={createRecord} variant="brand"></lightning-button>
+            </div>
+            <div class="slds-float_left">
+               <lightning-button slot="actions" label="Delete" onclick={deleteRecord} variant="destructive">
+               </lightning-button>
+            </div>
+            <div class="slds-form-element__control">
+               <lightning-input type="search" placeholder="Enter Search Value" onchange={handleSearch} value={handleSearch}>
+               </lightning-input>
+            </div>
+            <div class="slds-box">
+               <lightning-datatable data={listPaginationPhone} columns={columns} key-field="Id"
+                  onrowaction={handleRowAction}>
+               </lightning-datatable>
+            </div>
+            <div class="slds-m-around_medium">
+               <c-popup-pagination records={listPhone.data} onupdate={updateListPhone}></c-popup-pagination>
+            </div>
+            <!-- SHOW MODAL -->
+            <c-popup-create-phone onsuccess={handleCreateSuccess}></c-popup-create-phone>
+            <c-popup-edit-detail-phone record-id={recordId} onsuccess={handleSuccess}></c-popup-edit-detail-phone>
+         </div>
+      </lightning-layout>
+   </lightning-card>
+</template>
