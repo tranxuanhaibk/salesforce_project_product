@@ -1,0 +1,68 @@
+<apex:page controller="TimeCardInvoiceController" applyHtmlTag="false" showHeader="false" renderAs="PDF">
+    <div style="margin-bottom:360px;">
+        <div style="float:left; padding-right:5px; position:absolute">
+            <apex:image id="cmc_logo" value="{!$Resource.cmc_logo}" width="120" height="120"/>
+            <div style="padding-top:50px;">
+                <apex:outputField value="{!timeCard.Name}"/><br></br>
+                <apex:outputField value="{!timeCard.Name}"/><br></br>
+                <apex:outputField value="{!timeCard.Name}"/><br></br>
+                <apex:outputField value="{!timeCard.Name}"/><br></br>
+                <apex:outputField value="{!timeCard.Name}"/><br></br>
+            </div>
+        </div>
+        <div style="float:right; padding-left:460px; position:absolute">
+            <div>
+                <apex:outputField value="{!timeCard.Name}"/><br></br>
+                <apex:outputField value="{!timeCard.Name}"/><br></br>
+                <apex:outputField value="{!timeCard.Name}"/><br></br>
+                <apex:outputField value="{!timeCard.Name}"/><br></br>
+            </div>
+            <div style="padding-top:100px;">
+                <h4><strong>TAX INVOICE: 10222</strong></h4>
+                <div style="background-color:#CFC7CC;">
+                    <apex:outputField value="{!timeCard.Name}"/><br></br>
+                    <apex:outputField value="{!timeCard.Name}"/><br></br>
+                    <apex:outputField value="{!timeCard.Name}"/><br></br>
+                    <apex:outputField value="{!timeCard.Name}"/><br></br>
+                </div>
+            </div>
+        </div>
+    </div>
+<br></br>
+    <div style="background-color:#CFC7CC;"><span>Invoice Detail</span></div>
+    <table style="font-family:sans-serif; border-bottom-width:2px; border-collapse:collapse;">
+        <tr>
+            <th style="padding-right:450px; padding-bottom:8px;">Description</th>
+            <th style="text-align:right; padding-left:5px; padding-right:160px; padding-bottom:10px;">Total</th>
+        </tr>
+        <tr>
+            <td style="padding-left:5px; border-top: 1px solid black; padding-top:20px">
+                Weekly Invoice for Shadow Project
+                <apex:outputField value="{!timeCard.Name}"/>
+            </td>
+            <td style="text-align:right; padding-right:160px; border-top: 1px solid black; padding-top:20px">
+                $600000000
+            </td>
+        </tr>
+         <tr>
+            <td style="padding-left:5px;">
+                Week: from abcccc to ccvvvvv
+                <apex:outputField value="{!timeCard.Name}"/>
+            </td>
+            <td style="text-align:right; padding-right:160px;"></td>
+        </tr>
+        <tr>
+            <td style="padding-left:5px; border-bottom: 1px solid black; padding-bottom:20px">
+                Consultant
+                <apex:outputField value="{!timeCard.Name}"/>
+            </td>
+            <td style="text-align:right; padding-right:160px; border-bottom: 1px solid black; padding-bottom:20px">
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-left:5px; padding-top:20px;">
+                <i>If you have any questions concerning this invoice, contact HaiTran at email HaiTran@cmcglobal.vn</i>
+            </td>
+        </tr>
+    </table>
+</apex:page>
