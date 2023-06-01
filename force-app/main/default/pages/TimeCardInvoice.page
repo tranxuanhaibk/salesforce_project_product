@@ -1,6 +1,69 @@
 <apex:page controller="TimeCardInvoiceController" applyHtmlTag="false" showHeader="false" renderAs="PDF">
+<html>
+    <head>
+        <style>
+            @page {
+                size: letter;
+                @bottom-right {
+                    content: "Page " counter(page) " of " counter(pages);
+                }
+            }
+
+            .page-break {
+                display:block;
+                page-break-after:always;
+            }
+
+            .footer_box_left {
+                color: #7E7878;
+                float: left;
+                width: 200px;
+                padding: 16px;
+                text-align:left
+            }
+
+            #footer_box_id p {
+                line-height: 5px;
+            }
+
+            .footer_box_center {
+                color: #7E7878;
+                float: left;
+                width: 200px;
+                padding: 16px;
+                text-align:left
+            }
+
+            .footer_box_right {
+                color: #7E7878;
+                float: right;
+                width: 200px;
+                padding: 16px;
+                text-align:left
+            }
+
+            .table_box {
+            width:100%;
+            border: 1px solid black;
+            padding: 10px;
+            border-collapse: collapse;
+            }
+
+            .table_box th {
+            border: 1px solid black;
+            padding: 10px;
+            }
+
+            .table_box td {
+            border: 1px solid black;
+            padding: 10px;
+            }
+        </style>
+    </head>
+<body>
+<div class="page-break">
     <div style="margin-bottom:360px;">
-        <div style="float:left; padding-right:5px; position:absolute">
+        <div style="float:left; width:50%; padding-right:5px; position:absolute">
             <apex:image id="cmc_logo" value="{!$Resource.cmc_logo}" width="120" height="120"/>
             <div style="padding-top:50px;">
                 <apex:outputField value="{!timeCard.Name}"/><br></br>
@@ -10,7 +73,7 @@
                 <apex:outputField value="{!timeCard.Name}"/><br></br>
             </div>
         </div>
-        <div style="float:right; padding-left:460px; position:absolute">
+        <div style="float:right; width:50%; padding-left:460px; position:absolute">
             <div>
                 <apex:outputField value="{!timeCard.Name}"/><br></br>
                 <apex:outputField value="{!timeCard.Name}"/><br></br>
@@ -28,7 +91,6 @@
             </div>
         </div>
     </div>
-<br></br>
     <div style="background-color:#CFC7CC;"><span>Invoice Detail</span></div>
     <table style="font-family:sans-serif; border-bottom-width:2px; border-collapse:collapse;">
         <tr>
@@ -65,4 +127,93 @@
             </td>
         </tr>
     </table>
+    <div class="footer" style="width:100%; margin-top:200px;">
+        <div id="footer_box_id" class="footer_box_left">
+            <p>Tesssss</p>
+            <p>Tesssss</p>
+            <p>Tesssss</p>
+        </div>
+        <div id="footer_box_id" class="footer_box_center">
+            <p>Tessss111s</p>
+            <p>Tesssss</p>
+            <p>Tesssss</p>
+        </div>
+        <div id="footer_box_id" class="footer_box_right">
+            <p>Tessss``s</p>
+            <p>Tesssss</p>
+            <p>Tesssss</p>
+        </div>
+    </div>
+</div>
+<div>
+    <div style="margin-bottom:260px;">
+        <div style="float:left; width:50%; padding-right:5px; position:absolute">
+            <apex:image id="cmc_logo_2" value="{!$Resource.cmc_logo}" width="120" height="120"/>
+        </div>
+        <div style="float:right; width:50%; padding-left:460px; position:absolute">
+            <div>
+                <apex:outputField value="{!timeCard.Name}"/><br></br>
+                <apex:outputField value="{!timeCard.Name}"/><br></br>
+                <apex:outputField value="{!timeCard.Name}"/><br></br>
+                <apex:outputField value="{!timeCard.Name}"/><br></br>
+            </div>
+        </div>
+    </div>
+    <div style="margin-top:260px;">
+        <table class="table_box">
+            <tr>
+                <th colspan="11">Detail Timesheet for Invoice Number</th>
+            </tr>
+            <tr>
+                <td>Jill</td>
+                <td>Smith</td>
+                <td>43</td>
+                <td>57</td>
+                <td>57</td>
+                <td>57</td>
+                <td>57</td>
+                <td>57</td>
+                <td>57</td>
+                <td>57</td>
+                <td>57</td>
+            </tr>
+            <tr>
+                <td>Jill</td>
+                <td>Smith</td>
+                <td>43</td>
+                <td>57</td>
+                <td>57</td>
+                <td>57</td>
+                <td>57</td>
+                <td>57</td>
+                <td>57</td>
+                <td>57</td>
+                <td>57</td>
+            </tr>
+            <tr>
+                <th colspan="3">TOTAL HOURS</th>
+                <th colspan="8">40</th>
+            </tr>
+        </table>
+    </div>
+        <div class="footer" style="width:100%; padding-top: 400px; padding-bottom: 15px;">
+        <div id="footer_box_id" class="footer_box_left">
+            <p>Tesssss</p>
+            <p>Tesssss</p>
+            <p>Tesssss</p>
+        </div>
+        <div id="footer_box_id" class="footer_box_center">
+            <p>Tessss111s</p>
+            <p>Tesssss</p>
+            <p>Tesssss</p>
+        </div>
+        <div id="footer_box_id" class="footer_box_right">
+            <p>Tessss``s</p>
+            <p>Tesssss</p>
+            <p>Tesssss</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
 </apex:page>
