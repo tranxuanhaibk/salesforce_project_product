@@ -1,219 +1,230 @@
 <apex:page controller="TimeCardInvoiceController" applyHtmlTag="false" showHeader="false" renderAs="PDF">
-<html>
-    <head>
-        <style>
-            @page {
-                size: letter;
-                @bottom-right {
-                    content: "Page " counter(page) " of " counter(pages);
+    <html>
+        <head>
+            <style>
+                @page {
+                    size: letter;
+                    @bottom-right {
+                        content: "Page " counter(page) " of " counter(pages);
+                    }
                 }
-            }
 
-            .page-break {
-                display:block;
-                page-break-after:always;
-            }
+                .page-break {
+                    display:block;
+                    page-break-after:always;
+                }
 
-            .footer_box_left {
-                color: #7E7878;
-                float: left;
-                width: 200px;
-                padding: 16px;
-                text-align:left
-            }
+                .table_box {
+                    width: 100%;
+                    table-layout: fixed;
+                    border: 1px solid black;
+                    border-collapse: collapse;
+                }
 
-            #footer_box_id p {
-                line-height: 5px;
-            }
+                .table_box th {
+                    border: 1px solid black;
+                    padding: 5px;
+                }
 
-            .footer_box_center {
-                color: #7E7878;
-                float: left;
-                width: 200px;
-                padding: 16px;
-                text-align:left
-            }
-
-            .footer_box_right {
-                color: #7E7878;
-                float: right;
-                width: 200px;
-                padding: 16px;
-                text-align:left
-            }
-
-            .table_box {
-            width:100%;
-            border: 1px solid black;
-            padding: 10px;
-            border-collapse: collapse;
-            }
-
-            .table_box th {
-            border: 1px solid black;
-            padding: 10px;
-            }
-
-            .table_box td {
-            border: 1px solid black;
-            padding: 10px;
-            }
-        </style>
-    </head>
-<body>
-<div class="page-break">
-    <div style="margin-bottom:360px;">
-        <div style="float:left; width:50%; padding-right:5px; position:absolute">
-            <apex:image id="cmc_logo" value="{!$Resource.cmc_logo}" width="120" height="120"/>
-            <div style="padding-top:50px;">
-                <apex:outputField value="{!timeCard.Name}"/><br></br>
-                <apex:outputField value="{!timeCard.Name}"/><br></br>
-                <apex:outputField value="{!timeCard.Name}"/><br></br>
-                <apex:outputField value="{!timeCard.Name}"/><br></br>
-                <apex:outputField value="{!timeCard.Name}"/><br></br>
-            </div>
-        </div>
-        <div style="float:right; width:50%; padding-left:460px; position:absolute">
-            <div>
-                <apex:outputField value="{!timeCard.Name}"/><br></br>
-                <apex:outputField value="{!timeCard.Name}"/><br></br>
-                <apex:outputField value="{!timeCard.Name}"/><br></br>
-                <apex:outputField value="{!timeCard.Name}"/><br></br>
-            </div>
-            <div style="padding-top:100px;">
-                <h4><strong>TAX INVOICE: 10222</strong></h4>
-                <div style="background-color:#CFC7CC;">
-                    <apex:outputField value="{!timeCard.Name}"/><br></br>
-                    <apex:outputField value="{!timeCard.Name}"/><br></br>
-                    <apex:outputField value="{!timeCard.Name}"/><br></br>
-                    <apex:outputField value="{!timeCard.Name}"/><br></br>
+                .table_box td {
+                    border: 1px solid black;
+                    text-align: center;
+                    line-break: auto;
+                    padding: 3px;
+                    width: 9%;
+                    word-wrap: break-word; 
+                    overflow-wrap: break-word;
+                }
+            </style>
+        </head>
+        <body>
+        <div class="page-break">
+            <div style="margin-bottom:360px;">
+                <div style="float:left; width:50%; margin-top:20px;">
+                    <apex:image id="cmc_logo" value="{!$Resource.cmc_logo}" width="120" height="120"/>
+                    <div style="padding-top:25px; width:200px; line-height: 3px;">
+                        <p>{!customerName}</p>
+                        <p>{!streetBillingAddress}</p>
+                        <p>{!cityBillingAddress}</p>
+                        <p>{!countryBillingAddress}</p>
+                    </div>
+                </div>
+                <div style="float:right; width:50%">
+                    <div style="color: #7E7878; line-height: 3px;">
+                        <p><strong>CMC GLOBAL COMPANY LIMITED</strong></p>
+                        <p>11 Duy Tan Street, Dich Vong Hau Ward</p>
+                        <p>Cau Giay District, Hanoi City, Vietnam</p>
+                        <p><strong>PHONE: </strong>+19009198</p>
+                        <p><strong>MAIL: </strong>cmcglobal@cmcgloba.vn</p>
+                        <p><strong>WEB: </strong>www.cmcglobal.vn</p>
+                    </div>
+                    <div style="padding-top:15px;">
+                        <h4><strong>TAX INVOICE: 10222</strong></h4>
+                        <div style="background-color:#CFC7CC;">
+                            <table style="width:100%; text-align:left;">
+                                <tr>
+                                    <td><strong>Invoice Date</strong></td>
+                                    <td><apex:outputField value="{!timeCard.Invoiced_Date__c}"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Customer Contact</strong></td>
+                                    <td>{!customerContact}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Customer Email</strong></td>
+                                    <td>{!customerEmail}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div style="background-color:#CFC7CC;"><span>Invoice Detail</span></div>
-    <table style="font-family:sans-serif; border-bottom-width:2px; border-collapse:collapse;">
-        <tr>
-            <th style="padding-right:450px; padding-bottom:8px;">Description</th>
-            <th style="text-align:right; padding-left:5px; padding-right:160px; padding-bottom:10px;">Total</th>
-        </tr>
-        <tr>
-            <td style="padding-left:5px; border-top: 1px solid black; padding-top:20px">
-                Weekly Invoice for Shadow Project
-                <apex:outputField value="{!timeCard.Name}"/>
-            </td>
-            <td style="text-align:right; padding-right:160px; border-top: 1px solid black; padding-top:20px">
-                $600000000
-            </td>
-        </tr>
-         <tr>
-            <td style="padding-left:5px;">
-                Week: from abcccc to ccvvvvv
-                <apex:outputField value="{!timeCard.Name}"/>
-            </td>
-            <td style="text-align:right; padding-right:160px;"></td>
-        </tr>
-        <tr>
-            <td style="padding-left:5px; border-bottom: 1px solid black; padding-bottom:20px">
-                Consultant
-                <apex:outputField value="{!timeCard.Name}"/>
-            </td>
-            <td style="text-align:right; padding-right:160px; border-bottom: 1px solid black; padding-bottom:20px">
-            </td>
-        </tr>
-        <tr>
-            <td style="padding-left:5px; padding-top:20px;">
-                <i>If you have any questions concerning this invoice, contact HaiTran at email HaiTran@cmcglobal.vn</i>
-            </td>
-        </tr>
-    </table>
-    <div class="footer" style="width:100%; margin-top:200px;">
-        <div id="footer_box_id" class="footer_box_left">
-            <p>Tesssss</p>
-            <p>Tesssss</p>
-            <p>Tesssss</p>
-        </div>
-        <div id="footer_box_id" class="footer_box_center">
-            <p>Tessss111s</p>
-            <p>Tesssss</p>
-            <p>Tesssss</p>
-        </div>
-        <div id="footer_box_id" class="footer_box_right">
-            <p>Tessss``s</p>
-            <p>Tesssss</p>
-            <p>Tesssss</p>
-        </div>
-    </div>
-</div>
-<div>
-    <div style="margin-bottom:260px;">
-        <div style="float:left; width:50%; padding-right:5px; position:absolute">
-            <apex:image id="cmc_logo_2" value="{!$Resource.cmc_logo}" width="120" height="120"/>
-        </div>
-        <div style="float:right; width:50%; padding-left:460px; position:absolute">
-            <div>
-                <apex:outputField value="{!timeCard.Name}"/><br></br>
-                <apex:outputField value="{!timeCard.Name}"/><br></br>
-                <apex:outputField value="{!timeCard.Name}"/><br></br>
-                <apex:outputField value="{!timeCard.Name}"/><br></br>
+            <div class="body-content">
+                <p style="background-color:#CFC7CC; width: 100%;">Invoice Detail</p>
+                <table style="font-family:sans-serif; border-bottom-width:2px; border-collapse:collapse;">
+                    <tr>
+                        <th style="padding-right:450px; padding-bottom:8px;">Description</th>
+                        <th style="text-align:right; padding-left:5px; padding-right:160px; padding-bottom:10px;">Total</th>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:5px; border-top: 1px solid black; padding-top:20px">
+                            Weekly Invoice for {!timeCard.Project_Name__c}
+                        </td>
+                        <td style="text-align:right; padding-right:160px; border-top: 1px solid black; padding-top:20px">
+                            {!timeCard.Invoiced_Amount__c} $
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:5px;">
+                            Week: <i>from {!firstSplitDate} to {!lastSplitDate}</i>
+                        </td>
+                        <td style="text-align:right; padding-right:160px;"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:5px; border-bottom: 1px solid black; padding-bottom:20px">
+                            Consultant {!timeCard.Employee_Full_Name__c}
+                        </td>
+                        <td style="text-align:right; padding-right:160px; border-bottom: 1px solid black; padding-bottom:20px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:5px; padding-top:20px;">
+                            <i>If you have any questions concerning this invoice, contact HaiTran at email HaiTran@cmcglobal.vn</i>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="footer" style="height:100px; margin-top:200px; margin-bottom: 15px;">
+                <table style="width:100%; color: #7E7878;">
+                    <tr>
+                        <td><strong>COMP.REG:</strong> 202334534M</td>
+                        <td><strong>BANK:</strong>2023064333</td>
+                        <td></td>
+                    </tr>            
+                    <tr>
+                        <td><strong>VAT/GST-NO:</strong>2023064333</td>
+                        <td>ACCOUNT: 003 9553232</td>
+                        <td>BIC/SWIFT: DB345345345XXX</td>
+                    </tr>            
+                    <tr>
+                        <td></td>
+                        <td><strong>AGENT BANK FOR:</strong></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>USD: JPMorgan Chase Bank, N.A</td>
+                        <td>BIC/SWIFT: NMF45345345XXX</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>EUR: Barclays Bank PLC, London</td>
+                        <td>BIC/SWIFT: DQQ345345345XXX</td>
+                    </tr>
+            </table>
             </div>
         </div>
-    </div>
-    <div style="margin-top:260px;">
-        <table class="table_box">
-            <tr>
-                <th colspan="11">Detail Timesheet for Invoice Number</th>
-            </tr>
-            <tr>
-                <td>Jill</td>
-                <td>Smith</td>
-                <td>43</td>
-                <td>57</td>
-                <td>57</td>
-                <td>57</td>
-                <td>57</td>
-                <td>57</td>
-                <td>57</td>
-                <td>57</td>
-                <td>57</td>
-            </tr>
-            <tr>
-                <td>Jill</td>
-                <td>Smith</td>
-                <td>43</td>
-                <td>57</td>
-                <td>57</td>
-                <td>57</td>
-                <td>57</td>
-                <td>57</td>
-                <td>57</td>
-                <td>57</td>
-                <td>57</td>
-            </tr>
-            <tr>
-                <th colspan="3">TOTAL HOURS</th>
-                <th colspan="8">40</th>
-            </tr>
-        </table>
-    </div>
-        <div class="footer" style="width:100%; padding-top: 400px; padding-bottom: 15px;">
-        <div id="footer_box_id" class="footer_box_left">
-            <p>Tesssss</p>
-            <p>Tesssss</p>
-            <p>Tesssss</p>
+        <div>
+            <div>
+                <div style="float:left; width:50%;">
+                    <apex:image id="cmc_logo_2" value="{!$Resource.cmc_logo}" width="120" height="120"/>
+                </div>
+                <div style="color: #7E7878; line-height: 3px;">
+                    <p><strong>CMC GLOBAL COMPANY LIMITED</strong></p>
+                    <p>11 Duy Tan Street, Dich Vong Hau Ward</p>
+                    <p>Cau Giay District, Hanoi City, Vietnam</p>
+                    <p><strong>PHONE: </strong>+19009198</p>
+                    <p><strong>MAIL: </strong>cmcglobal@cmcgloba.vn</p>
+                    <p><strong>WEB: </strong>www.cmcglobal.vn</p>
+                </div>
+            </div>
+            <div style="margin-top:50px;">
+                <table class="table_box">
+                    <tr>
+                        <th colspan="11">Detail Timesheet for Invoice Number</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Start Date</strong></td>
+                        <td><strong>End Date</strong></td>
+                        <td><strong>Consultant Name</strong></td>
+                        <td><strong>Billed Hrs</strong></td>
+                        <td><strong>Monday Hrs</strong></td>
+                        <td><strong>Tuesday Hrs</strong></td>
+                        <td><strong>Wednesday Hrs</strong></td>
+                        <td><strong>Tuesdays Hrs</strong></td>
+                        <td><strong>Friday Hrs</strong></td>
+                        <td><strong>Saturday Hrs</strong></td>
+                        <td><strong>Sunday Hrs</strong></td>
+                    </tr>
+                    <tr>
+                        <td>{!firstSplitDate}</td>
+                        <td>{!lastSplitDate}</td>
+                        <td><apex:outputField value="{!timeCard.Employee_Full_Name__c}"/></td>
+                        <td><apex:outputField value="{!timeCard.Total_Worked_Hour__c}"/></td>
+                        <td><apex:outputField value="{!timeCard.Monday_Hours__c}"/></td>
+                        <td><apex:outputField value="{!timeCard.Tuesday_Hours__c}"/></td>
+                        <td><apex:outputField value="{!timeCard.Wednesday_Hours__c}"/></td>
+                        <td><apex:outputField value="{!timeCard.Thursday_Hours__c}"/></td>
+                        <td><apex:outputField value="{!timeCard.Friday_Hours__c}"/></td>
+                        <td><apex:outputField value="{!timeCard.Saturday_Hours__c}"/></td>
+                        <td><apex:outputField value="{!timeCard.Sunday_Hours__c}"/></td>
+                    </tr>
+                    <tr>
+                        <th colspan="3">TOTAL HOURS</th>
+                        <th colspan="8" style="text-align:left;"><apex:outputField value="{!timeCard.Total_Worked_Hour__c}"/></th>
+                    </tr>
+                </table>
+            </div>
+            <div class="footer" style="height:100px; padding-top: 400px; margin-bottom: 15px;">
+                <table style="width:100%; color: #7E7878;">
+                    <tr>
+                        <td><strong>COMP.REG:</strong> 202334534M</td>
+                        <td><strong>BANK:</strong>2023064333</td>
+                        <td></td>
+                    </tr>            
+                    <tr>
+                        <td><strong>VAT/GST-NO:</strong>2023064333</td>
+                        <td>ACCOUNT: 003 9553232</td>
+                        <td>BIC/SWIFT: DB345345345XXX</td>
+                    </tr>            
+                    <tr>
+                        <td></td>
+                        <td><strong>AGENT BANK FOR:</strong></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>USD: JPMorgan Chase Bank, N.A</td>
+                        <td>BIC/SWIFT: NMF45345345XXX</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>EUR: Barclays Bank PLC, London</td>
+                        <td>BIC/SWIFT: DQQ345345345XXX</td>
+                    </tr>
+            </table>
+            </div>
         </div>
-        <div id="footer_box_id" class="footer_box_center">
-            <p>Tessss111s</p>
-            <p>Tesssss</p>
-            <p>Tesssss</p>
-        </div>
-        <div id="footer_box_id" class="footer_box_right">
-            <p>Tessss``s</p>
-            <p>Tesssss</p>
-            <p>Tesssss</p>
-        </div>
-    </div>
-</div>
-</body>
-</html>
+        </body>
+    </html>
 </apex:page>
