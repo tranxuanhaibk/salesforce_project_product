@@ -1,0 +1,84 @@
+<template>
+    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-label="Example table of Opportunities with vertical borders">
+        <thead>
+          <tr class="slds-line-height_reset">
+            <th class="" scope="col">
+              <div class="slds-truncate" title="PROJECT/ASSIGNMENT">PROJECT/ASSIGNMENT</div>
+            </th>
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Account Name">ADMIN</div>
+            </th>
+            <template for:each={weekdays} for:item="item">
+              <th key={item} class="" scope="col">
+                <div class="slds-truncate" title="Account Name">{item}</div>
+              </th>
+            </template>
+            <th class="" scope="col">
+              <div class="slds-truncate" title="SUM">SUM</div>
+            </th>
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Account Name">STATUS</div>
+            </th>
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Account Name">RECALL</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="slds-hint-parent">
+            <th data-label="Opportunity Name" scope="row">
+              <div class="slds-truncate" title="Cloudhub">
+                <c-lwc-custom-lookup></c-lwc-custom-lookup> 
+              </div>
+            </th>
+            <td data-label="Account Name">
+              <div class="slds-truncate" title="Cloudhub">
+                <lightning-input type="text"></lightning-input>
+              </div>
+            </td>
+            <td data-label="Close Date">
+              <div class="slds-truncate" title="4/14/2015"><lightning-input type="text"></lightning-input></div>
+            </td>
+            <td data-label="Prospecting">
+              <div class="slds-truncate" title="Prospecting"><lightning-input type="text"></lightning-input></div>
+            </td>
+            <td data-label="Confidence">
+              <div class="slds-truncate" title="20%"><lightning-input type="text"></lightning-input></div>
+            </td>
+            <td data-label="Amount">
+              <div class="slds-truncate" title="$25k"><lightning-input type="text"></lightning-input></div>
+            </td>
+            <td data-label="Contact">
+              <div class="slds-truncate" title="jrogers@cloudhub.com">
+                <lightning-input type="text"></lightning-input>
+              </div>
+            </td>
+            <td data-label="Contact">
+              <div class="slds-truncate" title="jrogers@cloudhub.com">
+                <lightning-input type="text"></lightning-input>
+              </div>
+            </td>
+            <td data-label="Contact">
+              <div class="slds-truncate" title="jrogers@cloudhub.com">
+                <lightning-input type="text"></lightning-input>
+              </div>
+            </td>
+            <td data-label="Contact">
+              <div class="slds-truncate" title="sum">
+                0
+              </div>
+            </td>
+            <td data-label="Contact">
+              <div class="slds-truncate" title="jrogers@cloudhub.com">
+                <lightning-input type="text"></lightning-input>
+              </div>
+            </td>
+            <td data-label="Contact">
+              <div class="slds-truncate" title="jrogers@cloudhub.com">
+                <lightning-input type="text"></lightning-input>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+</template>
