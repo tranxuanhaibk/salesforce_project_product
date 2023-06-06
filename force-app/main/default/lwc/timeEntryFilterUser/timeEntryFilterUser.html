@@ -1,17 +1,17 @@
 <template>
-    <div class="slds-grid slds-gutters slds-theme_default slds-p-horizontal_small">
-        <div class="slds-col slds-size_3-of-6">
-            <h3>
-                Time Entry
-            </h3>
-        </div>
-        <div class="slds-col slds-size_3-of-6">
-            <div class="customLookup">
-                <c-lwc-custom-lookup></c-lwc-custom-lookup> 
+    <lightning-card>
+        <div class="body-container">
+            <div class="colum">
+                <h3>Time Entry</h3>
             </div>
-            <lightning-button class="slds-col" variant="brand" label="Copy From Previous Week" title="Save action" onclick={handleClick}></lightning-button>
-            <lightning-button class="slds-col" variant="brand" label="Save" title="Save action" onclick={handleClick}></lightning-button>
-            <lightning-button class="slds-col" variant="success" label="Submit" title="Submit action" onclick={handleClick}></lightning-button>
+            <div class="colum colum2">
+                <div class="slds-col customLookup">
+                    <c-lwc-custom-lookup object-name="User" filter-field="Name" onselected={handleFilter}></c-lwc-custom-lookup>
+                </div>
+                <lightning-button class="slds-col" variant="brand" label="Copy From Previous Week" title="Save action" onclick={handleClick}></lightning-button>
+                <lightning-button class="slds-col" variant="brand" label="Save" title="Save action" onclick={handleClick}></lightning-button>
+                <lightning-button class="slds-col" variant="success" label="Submit" title="Submit action" onclick={handleClick}></lightning-button>
+            </div>
         </div>
-    </div>
+    </lightning-card>
 </template>
