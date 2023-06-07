@@ -1,14 +1,39 @@
-import { LightningElement } from 'lwc';
+import { LightningElement, track, wire } from 'lwc';
+import { registerListener, unregisterAllListeners } from 'c/pubsub'; 
+import { CurrentPageReference } from 'lightning/navigation';
+import getProjectList from '@salesforce/apex/TimeEntryController.getProjectList';
 
 export default class TimeEntry extends LightningElement {
-    weekdays = [];
-
+  weekdays = [];
+  recordListParent = [];
+  recordidListParent = [];
+  dataValue;
+  userId = '';
+  @wire(CurrentPageReference) pageRef;
+  
   connectedCallback() {
-    this.getWeekDays();
+    registerListener('parentPublisher', this.handleGetUserId, this);
+    this.getWeekDays(new Date());
+    this.dataValue = this.convertFormatDate(new Date());
+    console.log('dataValue , ', this.dataValue);
   }
 
-  getWeekDays() {
-    const today = new Date();
+  handleGetUserId(data) {
+    this.userId = data;
+    this.recordListParent = getProjectList({
+      userId: this.userId
+    }).then(data => {
+      if (data) {
+        return data;
+      }
+    }).catch(error => {
+      console.log('error ', error);
+    });
+
+    console.log('recordListParent ', this.recordListParent);
+  }
+
+  getWeekDays(today) {
     const currentDay = today.getDay();
     const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - currentDay);
     let nameDay = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
@@ -16,5 +41,9 @@ export default class TimeEntry extends LightningElement {
       const day = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + i);
       this.weekdays.push(nameDay[i] + '\n' + day.getDate() + '/' + day.getMonth());
     }
+  }
+
+  convertFormatDate(date) {
+    return date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
   }
 }

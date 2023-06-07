@@ -10,6 +10,18 @@ export default class LwcCustomLookup extends LightningElement {
 
     @api objectName;
     @api filterField;
+    @api recordidListParent;
+
+    @api
+    get pagerData() {
+        return this.recordList;
+    }
+    set pagerData(value) {
+        this.recordList = value;
+        console.log('value ', value);
+        console.log('this.recordList ', this.recordList);
+        console.log('this.recordList ', this.recordList);
+    }
 
     @wire(getObjects, {objectName:'$objectName', fieldName:'$filterField', value:'$valueInput'})
     retrieveAccounts ({error, data}) {
