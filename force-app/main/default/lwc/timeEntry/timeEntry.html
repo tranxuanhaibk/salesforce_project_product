@@ -39,9 +39,6 @@
               <th class="" scope="col">
                 <div class="slds-truncate" title="Account Name">STATUS</div>
               </th>
-              <th class="" scope="col">
-                <div class="slds-truncate" title="Account Name">RECALL</div>
-              </th>
             </tr>
           </thead>
           <tbody>
@@ -90,12 +87,8 @@
               </td>
               <td data-label="Contact">
                 <div class="slds-truncate" title="jrogers@cloudhub.com">
-                  <lightning-input type="text"></lightning-input>
-                </div>
-              </td>
-              <td data-label="Contact">
-                <div class="slds-truncate" title="jrogers@cloudhub.com">
-                  <lightning-input type="text"></lightning-input>
+                  <lightning-combobox name="progress" value={value} placeholder="Select Progress"
+                    options={options} onchange={handleChangeStatus} ></lightning-combobox>
                 </div>
               </td>
             </tr>

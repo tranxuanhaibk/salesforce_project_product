@@ -21,25 +21,23 @@
                            </button>    
                             </div>
                             <!-- Start : Parent Search Result -->
-                            <div style="position: absolute;">
+                            <div style="position: relative;">
                                 <template if:true={showSearchedValues}>
                                     <div class="slds-box slds-theme_default" style="height: 130px; width: 165px; overflow-y: scroll; margin-top: 52px; z-index: 2; position: absolute;">
-                                        <ul class="" role="">
+                                        <ul class="slds-list_horizontal slds-wrap" role="listbox">
                                             <template for:each={recordList} for:item="obj">
-                                                <li class="slds-p-around_x-small" style="cursor: pointer;" key={obj.recId}
-                                                    onclick={handleParentSelection} data-value={obj.recId}
-                                                    data-label={obj.recName}>
+                                                <li class="slds-item slds-p-around_x-small" style="cursor: pointer;" key={obj.recId} onclick={handleParentSelection} data-value={obj.recId} data-label={obj.recName}>
                                                     {obj.recName}
                                                 </li>
                                             </template>
-                                            <li>Tesss</li>
                                         </ul>
                                     </div>
                                 </template>
-                                <div if:true={messageResult}>
-                                    No Result Found!
-                                </div>
+                                <template if:true={messageResult}>
+                                    <div style="position: absolute;">No Result Found!</div>
+                                </template>
                             </div>
+                            
                         </div>
                     </div>
                 </div>
