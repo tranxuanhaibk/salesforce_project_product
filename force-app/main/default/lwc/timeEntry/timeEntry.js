@@ -15,7 +15,7 @@ export default class TimeEntry extends LightningElement {
   selectedValueRow = 3;
   dayObject = {'1':'monday', '2':'tuesday', '3':'webnesday'};
   weekDayKeys = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
-  rows = [1, 2, 3];
+  @track rows = [1, 2, 3];
 
   get optionsStatus() {
     return [
@@ -79,20 +79,7 @@ export default class TimeEntry extends LightningElement {
     const rowIndex = event.target.rowNumber;
     console.log('objectData ', rowIndex);
 
-    // if (Object.keys(this.objectData).length > 0) {
-    //   if (this.objectData.hasOwnProperty(rowIndex)) {
-    //     if (Object.keys(this.objectData[rowIndex]).length == 0) {
-    //       this.objectData[rowIndex] = {};
-    //     }
-    //   } else {
-    //     this.objectData[rowIndex] = {};
-    //   }
-    // } else {
-    //   this.objectData[rowIndex] = {};
-    // }
-
-    // this.objectData[rowIndex]['projectId'] = projectId;
-    // console.log('objectData ', this.objectData);
+    this.updateObjectData(this.objectData, rowIndex, 'projectId', projectId);
   }
 
   handleSaveData() {
@@ -107,12 +94,30 @@ export default class TimeEntry extends LightningElement {
     const columnsLabel = tdElement.getAttribute('data-colums-label');
     const columnsDate = tdElement.getAttribute('data-colums-date');
 
-    console.log('dataset.columnsLabel ',columnsLabel);
-    console.log('dataset.columnsDate ',columnsDate);
-    console.log('dataset.rowIndex ', rowIndex);
-    console.log('this.valueInput ', this.valueInput);
+    // const tableRows = this.template.querySelectorAll('tbody tr');
+    // tableRows[0].childNodes[5].innerHTML = 3;
+    // console.log('dataset.columnsLabel ',columnsLabel);
+    // console.log('dataset.columnsDate ',columnsDate);
+    // console.log('dataset.rowIndex ', rowIndex);
+    // console.log('this.valueInput ', this.valueInput);
 
-    this.objectData = this.updateObjectData(this.objectData, rowIndex, columnsLabel, this.valueInput);
+    this.updateObjectData(this.objectData, rowIndex, columnsLabel, this.valueInput);
+    let totalRow = this.handleCalculateRowSum(rowIndex, this.objectData);
+    const tableRows = this.template.querySelectorAll('tbody tr');
+    const tableRowIndex = parseInt(rowIndex) - 1;
+    tableRows[tableRowIndex].childNodes[8].innerHTML = totalRow;
+  }
+
+  handleCalculateRowSum(rowIndex, objectOriginal) {
+    let sum = 0.00;
+    let keyDate = this.weekDayKeys;
+    Object.keys(objectOriginal[rowIndex]).forEach(function(key) {
+      if (keyDate.includes(key)) {
+        sum += parseFloat(objectOriginal[rowIndex][key]);
+      }
+    });
+    // console.log('sum of ' + rowIndex + ' ' + sum);
+    return sum;
   }
 
   handleChangeStatus(event) {
@@ -121,10 +126,25 @@ export default class TimeEntry extends LightningElement {
 
   handleChangeRow(event) {
     this.selectedValueRow = +event.detail.value;
-    console.log('this.valueRow ', this.valueRow);
+    console.log('selectedValueRow ', selectedValueRow);
+    if (selectedValueRow == 5) {
+      this.rows = [1, 2, 3, 4, 5];
+    }
   }
 
-  updateObjectData(objectOriganal, rowIndex, columnsLabel, valueInput) {
+  updateObjectData(objectOriginal, rowIndex, columnsLabel, valueInput) {
+    if (Object.keys(objectOriginal).length > 0) {
+      if (objectOriginal.hasOwnProperty(rowIndex)) {
+        if (Object.keys(objectOriginal[rowIndex]).length == 0) {
+          this.objectData[rowIndex] = {};
+        }
+      } else {
+        this.objectData[rowIndex] = {};
+      }
+    } else {
+      this.objectData[rowIndex] = {};
+    }
 
+    this.objectData[rowIndex][columnsLabel] = valueInput;
   }
 }

@@ -13,4 +13,16 @@ public with sharing class TimeEntryController {
         }
         return sObjectResultList;
     }
+
+    public static Time getEndTime(Decimal inputDate) {
+        Integer hour = Integer.valueOf(Math.floor(inputDate));
+        Integer minutes = Integer.valueOf(Math.floor((inputDate - hour) * 60));
+        Time startTime = Time.newInstance(9, 0, 0, 0);
+        Time endTime = startTime.addHours(hour);
+        endTime = endTime.addMinutes(minutes);
+        // System.debug('hour' + hour);
+        // System.debug('minutes' + minutes);
+        // System.debug('endTime' + endTime);
+        return endTime;
+    }
 }
