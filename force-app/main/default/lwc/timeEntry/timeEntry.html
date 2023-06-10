@@ -1,4 +1,11 @@
 <template>
+  <div style="margin: 10px 0px 10px 0px;">
+    <lightning-card>
+      <div class="slds-col">
+        <lightning-button onclick={handleNext} variant="brand" icon-name="utility:chevronright"></lightning-button>
+      </div>
+    </lightning-card>
+  </div>
   <div class="slds-tabs_card" style="height: 600px;">
     <div style="width: 400px;">
       <lightning-card style="padding-left: 20px;">
@@ -15,6 +22,9 @@
           <div class="slds-col">
               <lightning-button onclick={handleNext} variant="brand" icon-name="utility:chevronright"></lightning-button>
           </div>
+          <div class="slds-col">
+            <lightning-button variant="brand" label="Save" onclick={handleSaveData}></lightning-button>
+          </div>
         </div>
     </lightning-card>
     </div>
@@ -22,78 +32,92 @@
       <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-label="Example table of Opportunities with vertical borders">
           <thead>
             <tr class="slds-line-height_reset">
-              <th class="" scope="col">
-                <div class="slds-truncate" title="PROJECT/ASSIGNMENT">PROJECT/ASSIGNMENT</div>
+              <th class="column" scope="col">
+                <div class="">PROJECT/ASSIGNMENT</div>
               </th>
-              <th class="" scope="col">
-                <div class="slds-truncate" title="Account Name">ADMIN</div>
-              </th>
-              <template for:each={weekdays} for:item="item">
+              <!-- <template for:each={weekdays} for:item="item">
                 <th key={item} class="" scope="col">
-                  <div class="slds-truncate" title="Account Name">{item}</div>
+                  <div class="">{item}</div>
+                  <div class="">getObjectDataValue(key)</div>
+                </th>
+              </template> -->
+              <template for:each={objectDataEntries} for:item="item">
+                <th class="column" key={item.key} scope="col">
+                  <p>{item.key}</p>
+                  <p>{item.value}</p>
                 </th>
               </template>
-              <th class="" scope="col">
-                <div class="slds-truncate" title="SUM">SUM</div>
+              <th class="column" scope="col">
+                <p class="">SUM</p>
               </th>
-              <th class="" scope="col">
-                <div class="slds-truncate" title="Account Name">STATUS</div>
+              <th class="column" scope="col">
+                <p class="">STATUS</p>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr class="slds-hint-parent">
-              <th data-label="Opportunity Name" scope="row">
-                <div class="slds-truncate" title="Cloudhub">
-                  <c-lwc-custom-lookup object-name="Project__c" filter-field="Name" recordid-list-parent={recordidListParent} pager-data={recordListParent} onselected={handleFilter}></c-lwc-custom-lookup> 
-                </div>
-              </th>
-              <td data-label="Account Name">
-                <div class="slds-truncate" title="Cloudhub">
-                  <lightning-input type="text"></lightning-input>
-                </div>
-              </td>
-              <td data-label="Close Date">
-                <div class="slds-truncate" title="4/14/2015"><lightning-input type="text"></lightning-input></div>
-              </td>
-              <td data-label="Prospecting">
-                <div class="slds-truncate" title="Prospecting"><lightning-input type="text"></lightning-input></div>
-              </td>
-              <td data-label="Confidence">
-                <div class="slds-truncate" title="20%"><lightning-input type="text"></lightning-input></div>
-              </td>
-              <td data-label="Amount">
-                <div class="slds-truncate" title="$25k"><lightning-input type="text"></lightning-input></div>
-              </td>
-              <td data-label="Contact">
-                <div class="slds-truncate" title="jrogers@cloudhub.com">
-                  <lightning-input type="text"></lightning-input>
-                </div>
-              </td>
-              <td data-label="Contact">
-                <div class="slds-truncate" title="jrogers@cloudhub.com">
-                  <lightning-input type="text"></lightning-input>
-                </div>
-              </td>
-              <td data-label="Contact">
-                <div class="slds-truncate" title="jrogers@cloudhub.com">
-                  <lightning-input type="text"></lightning-input>
-                </div>
-              </td>
-              <td data-label="Contact">
-                <div class="slds-truncate" title="sum">
-                  0
-                </div>
-              </td>
-              <td data-label="Contact">
-                <div class="slds-truncate" title="jrogers@cloudhub.com">
-                  <lightning-combobox name="progress" value={value} placeholder="Select Progress"
-                    options={options} onchange={handleChangeStatus} ></lightning-combobox>
-                </div>
-              </td>
-            </tr>
+            <template for:each={rows} for:item="row" for:index="index">
+              <tr key={row}>
+                <td data-colums-label="projectId">
+                  <div>
+                    <c-lwc-custom-lookup object-name="Project__c" filter-field="Name" onselected={handleLookupProject} row-number={row}></c-lwc-custom-lookup> 
+                  </div>
+                </td>
+                <template for:each={objectDataEntries} for:item="item">
+                  <td key={item.key} data-colums-label={item.key} data-colums-date={item.value} class="data-cell">
+                    <lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
+                      data-row-index={row}></lightning-input>
+                  </td>
+                </template>
+                <!-- <td data-colums-label="monday" class="data-cell">
+                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
+                    data-row-index={row}></lightning-input></div>
+                </td>
+                <td data-colums-label="tuesday" class="data-cell">
+                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
+                    data-row-index={row}></lightning-input></div>
+                </td>
+                <td data-colums-label="wednesday" class="data-cell">
+                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
+                    data-row-index={row}></lightning-input></div>
+                </td>
+                <td data-colums-label="thusday" class="data-cell">
+                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
+                    data-row-index={row}></lightning-input></div>
+                </td>
+                <td data-colums-label="friday" class="data-cell">
+                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
+                    data-row-index={row}></lightning-input></div>
+                </td>
+                <td data-colums-label="saturday" class="data-cell">
+                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
+                    data-row-index={row}></lightning-input></div>
+                </td>
+                <td data-colums-label="sunday" class="data-cell">
+                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
+                    data-row-index={row}></lightning-input></div>
+                </td> -->
+                <td data-colums-label="total" class="data-cell">
+                  <div class="">0</div>
+                </td>
+                <td data-colums-label="status" class="data-cell">
+                  <div class="" title="">
+                    <lightning-combobox value={valueStatus}
+                      options={optionsStatus} onchange={handleChangeStatus} ></lightning-combobox>
+                  </div>
+                </td>
+                <!-- <template for:each={row} for:item="day" for:index="cellIndex">
+                  <td key={day}>
+                      <lightning-input type="text" value={cell} onchange={handleInputChange} data-row-index={row}></lightning-input>
+                  </td>
+                </template> -->
+              </tr>
+            </template>
           </tbody>
         </table>
+        <div>
+          <lightning-combobox class="custom-combobox" value={selectedValueRow} options={optionsRow} onchange={handleChangeRow} ></lightning-combobox>
+        </div>
     </div>
   </div>
 </template>

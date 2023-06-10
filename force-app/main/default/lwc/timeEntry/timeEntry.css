@@ -1,3 +1,17 @@
-.slds-truncate {
-    padding: 0px;
+.custom-combobox {
+    width: 100%;
+}
+
+.slds-table {
+    width: 100%;
+}
+
+.slds-table .column {
+    padding-left: 50px;
+    padding-right: 50px;
+    text-align: center;
+}
+
+.data-cell {
+    text-align: center;
 }

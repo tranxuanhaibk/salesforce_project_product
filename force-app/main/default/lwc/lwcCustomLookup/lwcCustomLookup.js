@@ -10,6 +10,7 @@ export default class LwcCustomLookup extends LightningElement {
 
     @api objectName;
     @api filterField;
+    @api rowNumber;
 
     @wire(getObjects, {objectName:'$objectName', fieldName:'$filterField', value:'$valueInput'})
     retrieveAccounts ({error, data}) {
@@ -51,7 +52,9 @@ export default class LwcCustomLookup extends LightningElement {
         this.messageResult = false;
         this.recordId =  event.target.dataset.value;
         this.valueInput =  event.target.dataset.label;   
-        const selectedEvent = new CustomEvent('selected', { detail: this.recordId });
+        const selectedEvent = new CustomEvent('selected', {
+            rowNumber: this.rowNumber,
+            detail: this.recordId });
         this.dispatchEvent(selectedEvent);
     }
 }
