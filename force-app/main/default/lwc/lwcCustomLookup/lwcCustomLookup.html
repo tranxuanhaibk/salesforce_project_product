@@ -9,16 +9,16 @@
                             <div class="slds-m-bottom_none slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
                                 <lightning-input type="text" id="combobox-id-16" value={valueInput}
                                     onchange={handleKeyChange} onkeydown={handleClick} onclick={handleClick}
-                                    onblur={handleClick} aria-activedescendant="option1"
+                                    onblur={handleBlur} onfocus={handleFocus} aria-activedescendant="option1"
                                     aria-autocomplete="list" aria-controls="listbox-id-12" role="textbox"
-                                    placeholder="Search..."></lightning-input>                                  
+                                    placeholder="Search..."></lightning-input>                      
                             <button
                                 class="slds-button slds-button_icon slds-input__icon slds-input__icon_right searchButtonStyle"
                                 title="Remove selected option">
                                 <lightning-button-icon icon-name="utility:search" variant="bare" alternative-text="Search"
                                             aria-hidden="true">
                                 </lightning-button-icon>
-                           </button>    
+                           </button>
                             </div>
                             <!-- Start : Parent Search Result -->
                             <div style="position: absolute;">
@@ -36,10 +36,9 @@
                                     </div>
                                 </template>
                                 <template if:true={messageResult}>
-                                    <div style="position: absolute;">No Result Found!</div>
+                                    <div>No Result Found!</div>
                                 </template>
                             </div>
-                            
                         </div>
                     </div>
                 </div>

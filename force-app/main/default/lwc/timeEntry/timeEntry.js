@@ -1,7 +1,7 @@
 import { LightningElement, track, wire } from 'lwc';
 import { registerListener, unregisterAllListeners } from 'c/pubsub'; 
 import { CurrentPageReference } from 'lightning/navigation';
-import getProjectList from '@salesforce/apex/TimeEntryController.getProjectList';
+import getProjectAssignment from '@salesforce/apex/TimeEntryController.getProjectAssignment';
 
 export default class TimeEntry extends LightningElement {
   weekdays = {};
@@ -13,7 +13,9 @@ export default class TimeEntry extends LightningElement {
   selectedValueRow = 3;
   showDatePicker = false;
   weekDayKeys = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
-  @track rows = [1, 2, 3];
+  @track rows = [];
+
+  projectAssignmentObject = [];
 
   get optionsStatus() {
     return [
@@ -37,12 +39,42 @@ export default class TimeEntry extends LightningElement {
     registerListener('parentPublisher', this.handleGetUserId, this);
     this.getWeekDays(new Date());
     this.dateValue = this.convertFormatDate(new Date());
-    console.log('this.dateValue ',this.dateValue);
-    // console.log('dateValue , ', this.dateValue);
+    this.rows = [
+      { id: 1, selectedValue: '', showSearchedValues: false},
+      { id: 2, selectedValue: '', showSearchedValues: false},
+      { id: 3, selectedValue: '', showSearchedValues: false}
+    ];
+    console.log('this.rows ',this.rows);
   }
 
   handleGetUserId(data) {
     this.userId = data;
+  }
+
+  handleBlur(event) {
+    const rowIndex = event.target.dataset.rowIndex;
+    this.rows[selectedIndex].showSearchedValues = false;
+  }
+
+  handleFocus(event) {
+    const rowIndex = event.target.dataset.rowIndex;
+    console.log(' rowIndex', rowIndex);
+    getProjectAssignment({
+      userId: this.userId
+    }).then((result) => {
+      console.log(' result ', result);
+      this.projectAssignmentObject = result;
+      console.log(' this.projectAssignmentObject time ',  this.projectAssignmentObject);
+    });
+    this.rows.forEach((row, index) => {
+      console.log('index', index);
+      if ((index + 1) == rowIndex) {
+        row.showSearchedValues = true;
+      } else {
+        row.showSearchedValues = false;
+      }
+    });
+    console.log(' this.rows', this.rows);
   }
 
   getWeekDays(dateInput) {
@@ -67,7 +99,7 @@ export default class TimeEntry extends LightningElement {
 
   convertFormatDate(date) {
     // date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
-    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-`;
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   }
   toggleDatePicker() {
     this.showDatePicker = !this.showDatePicker;
@@ -112,6 +144,17 @@ export default class TimeEntry extends LightningElement {
 
   handleSaveData() {
     // todo
+  }
+
+  handleClickProjectAssignment(event) {
+    console.log(' this.rows 12311 ');
+    const selectedValue1 = event.target.dataset.label;
+    const selectedIndex = event.target.dataset.rowIndex;
+    console.log(' selectedValue ',  selectedValue1);
+    console.log(' selectedIndex ',  selectedIndex);
+    this.rows[selectedIndex].selectedValue = selectedValue1;
+    this.rows[selectedIndex].showSearchedValues = false;
+    console.log(' this.rows ',  this.rows);
   }
 
   handleChangeInput(event) {
@@ -163,11 +206,20 @@ export default class TimeEntry extends LightningElement {
   handleChangeRow(event) {
     this.selectedValueRow = +event.detail.value;
     if (this.selectedValueRow == 3) {
-      this.rows = [1, 2, 3];
+      this.rows =  [
+        { id: 1, name: 'Row 1' },
+        { id: 2, name: 'Row 2' },
+        { id: 3, name: 'Row 3' }];
     } else if (this.selectedValueRow == 5){
-      this.rows = [1, 2, 3, 4, 5];
+      this.rows =  [
+        { id: 1, name: 'Row 1' },
+        { id: 2, name: 'Row 2' },
+        { id: 3, name: 'Row 3' }];
     } else {
-      this.rows = [1, 2, 3, 4, 5, 6, 7];
+      this.rows =  [
+        { id: 1, name: 'Row 1' },
+        { id: 2, name: 'Row 2' },
+        { id: 3, name: 'Row 3' }];
     }
   }
 

@@ -6,7 +6,8 @@
             </div>
             <div class="colum colum2">
                 <div class="slds-col customLookup">
-                    <c-lwc-custom-lookup object-name="User" filter-field="Name" onselected={handleFilter}></c-lwc-custom-lookup>
+                    <c-lwc-custom-lookup object-name="User" filter-field="Name" onselected={handleFilter}
+                    is-user="true"></c-lwc-custom-lookup>
                 </div>
                 <lightning-button class="slds-col" variant="brand" label="Copy From Previous Week" title="Save action" onclick={handleClick}></lightning-button>
                 <lightning-button class="slds-col" variant="brand" label="Save" title="Save action" onclick={handleClick}></lightning-button>

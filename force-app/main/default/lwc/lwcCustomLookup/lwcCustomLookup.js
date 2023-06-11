@@ -1,4 +1,4 @@
-import { LightningElement, wire, api } from 'lwc';
+import { LightningElement, wire, api, track } from 'lwc';
 import getObjects from '@salesforce/apex/customLookupController.getResults';
 export default class LwcCustomLookup extends LightningElement {
     valueInput = '';
@@ -7,10 +7,19 @@ export default class LwcCustomLookup extends LightningElement {
     messageResult = false;
     isShowResult = true;   
     showSearchedValues = false;
+    // isDisabled = true;
 
     @api objectName;
     @api filterField;
     @api rowNumber;
+    @api isUser;
+    // @api projectAssignment = [];
+
+    // connectedCallback() {
+    //     if (this.isUser == 'true') {
+    //         this.isDisabled =false;
+    //     }
+    // }
 
     @wire(getObjects, {objectName:'$objectName', fieldName:'$filterField', value:'$valueInput'})
     retrieveAccounts ({error, data}) {
@@ -51,10 +60,30 @@ export default class LwcCustomLookup extends LightningElement {
         this.isShowResult = false;
         this.messageResult = false;
         this.recordId =  event.target.dataset.value;
-        this.valueInput =  event.target.dataset.label;   
+        this.valueInput =  event.target.dataset.label;
+        let number =  this.rowNumber ? this.rowNumber : '';
         const selectedEvent = new CustomEvent('selected', {
-            rowNumber: this.rowNumber,
+            rowNumber: number,
             detail: this.recordId });
         this.dispatchEvent(selectedEvent);
+    }
+
+    handleFocus() {
+        // let arrayNew = [];
+        // if (this.projectAssignment) {
+        //     console.log('this.projectAssignment ', Object.keys(this.projectAssignment).length);
+        //     console.log('this.projectAssignment ', arrayNew[this.projectAssignment]);
+        //     // this.showSearchedValues = true;
+        //     // Object.keys(this.projectAssignment).forEach(function(key) {
+        //     //     console.log('this.projectAssignmentkey ', key);
+        //     // });
+        //     // console.log('this.projectAssignment ', this.projectAssignment);
+        //     // this.recordList = this.projectAssignment;
+        // }
+    }
+
+    handleBlur(){
+        // this.recordList = [];
+        // this.showSearchedValues = false;
     }
 }
