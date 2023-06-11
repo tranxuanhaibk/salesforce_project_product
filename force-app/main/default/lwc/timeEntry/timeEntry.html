@@ -1,121 +1,118 @@
 <template>
-  <div style="margin: 10px 0px 10px 0px;">
-    <lightning-card>
-      <div class="slds-col">
-        <lightning-button onclick={handleNext} variant="brand" icon-name="utility:chevronright"></lightning-button>
-      </div>
-    </lightning-card>
-  </div>
-  <div class="slds-tabs_card" style="height: 600px;">
-    <div style="width: 400px;">
-      <lightning-card style="padding-left: 20px;">
-        <div class="slds-grid slds-wrap slds-align_absolute-center">
-          <div class="slds-col">
-            <lightning-card>Week Ending</lightning-card>
-          </div>
-          <div class="slds-col">
-              <lightning-button variant="brand" onclick={handlePrevious} icon-name="utility:chevronleft"></lightning-button>
-          </div>
-          <div class="slds-col">
-              <lightning-input type="date" value={dataValue} style="width: 200px; height:70px"></lightning-input>
-          </div>
-          <div class="slds-col">
-              <lightning-button onclick={handleNext} variant="brand" icon-name="utility:chevronright"></lightning-button>
-          </div>
-          <div class="slds-col">
-            <lightning-button variant="brand" label="Save" onclick={handleSaveData}></lightning-button>
-          </div>
+  <div>
+    <div style="margin: 10px 0px 10px 0px;">
+      <lightning-card>
+        <div class="slds-col">
+          <lightning-button onclick={handleNext} variant="brand" icon-name="utility:chevronright"></lightning-button>
         </div>
-    </lightning-card>
+      </lightning-card>
     </div>
-    <div class="">
-      <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-label="Example table of Opportunities with vertical borders">
-          <thead>
-            <tr class="slds-line-height_reset">
-              <th class="column" scope="col">
-                <div class="">PROJECT/ASSIGNMENT</div>
-              </th>
-              <!-- <template for:each={weekdays} for:item="item">
-                <th key={item} class="" scope="col">
-                  <div class="">{item}</div>
-                  <div class="">getObjectDataValue(key)</div>
+    <div class="slds-tabs_card" style="height: 600px;">
+      <div style="width: 400px;">
+        <lightning-card style="padding-left: 20px;">
+          <lightning-layout>
+            <lightning-layout-item  class="slds-size_2-of-12 slds-align_absolute-center">
+              <lightning-card>Week Ending</lightning-card>
+            </lightning-layout-item>
+            <lightning-layout-item class="slds-size_2-of-12 slds-align_absolute-center">
+              <lightning-button variant="brand" onclick={handlePreviousWeek} icon-name="utility:chevronleft"></lightning-button>
+            </lightning-layout-item>
+            <lightning-layout-item class="slds-size_4-of-12 slds-align_absolute-center">
+              <lightning-input class="custom-input-container" type="date" value={dateValue} onchange={handleDateChange} date-style="short"></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item  class="slds-size_2-of-12 slds-align_absolute-center">
+              <lightning-button onclick={handleNextWeek} variant="brand" icon-name="utility:chevronright"></lightning-button>
+            </lightning-layout-item>
+            <lightning-layout-item  class="slds-size_2-of-12 slds-align_absolute-center">
+              <lightning-button variant="brand" label="Save" onclick={handleSaveData}></lightning-button>
+            </lightning-layout-item>
+            <lightning-layout-item  class="slds-size_2-of-12 slds-align_absolute-center">
+              <lightning-combobox value={selectedValueRow} options={optionsRow} onchange={handleChangeRow}></lightning-combobox>
+            </lightning-layout-item>
+          </lightning-layout>
+        </lightning-card>
+          <!-- <div class="slds-grid slds-wrap slds-align_absolute-center">
+            <div class="slds-col">
+              <lightning-card>Week Ending</lightning-card>
+            </div>
+            <div class="slds-col">
+              <lightning-button variant="brand" onclick={handlePreviousWeek} icon-name="utility:chevronleft"></lightning-button>
+            </div>
+            <div class="slds-col">
+              <lightning-input type="date" value={dateValue} onchange={handleDateChange} date-style="short" style="width: 200px; height:70px"></lightning-input>
+            </div>
+            <div class="slds-col">
+                <lightning-button onclick={handleNextWeek} variant="brand" icon-name="utility:chevronright"></lightning-button>
+            </div>
+            <div class="slds-col">
+              <lightning-button variant="brand" label="Save" onclick={handleSaveData}></lightning-button>
+            </div>
+          </div> -->
+      <!-- </lightning-card> -->
+      </div>
+      <div class="container">
+        <div class="table-wrapper">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-label="Example table of Opportunities with vertical borders">
+            <thead>
+              <tr class="slds-line-height_reset">
+                <th class="column" scope="col">
+                  <div class="">PROJECT/ASSIGNMENT</div>
                 </th>
-              </template> -->
-              <template for:each={objectDataEntries} for:item="item">
-                <th class="column" key={item.key} scope="col">
-                  <p>{item.key}</p>
-                  <p>{item.value}</p>
-                </th>
-              </template>
-              <th class="column" scope="col">
-                <p class="">SUM</p>
-              </th>
-              <th class="column" scope="col">
-                <p class="">STATUS</p>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <template for:each={rows} for:item="row" for:index="index">
-              <tr key={row}>
-                <td data-colums-label="projectId">
-                  <div>
-                    <c-lwc-custom-lookup object-name="Project__c" filter-field="Name" onselected={handleLookupProject} row-number={row}></c-lwc-custom-lookup> 
-                  </div>
-                </td>
-                <template for:each={objectDataEntries} for:item="item">
-                  <td key={item.key} data-colums-label={item.key} data-colums-date={item.value} class="data-cell">
-                    <lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
-                      data-row-index={row}></lightning-input>
-                  </td>
-                </template>
-                <td data-colums-label="total" class="data-cell"></td>
-                <!-- <td data-colums-label="monday" class="data-cell">
-                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
-                    data-row-index={row}></lightning-input></div>
-                </td>
-                <td data-colums-label="tuesday" class="data-cell">
-                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
-                    data-row-index={row}></lightning-input></div>
-                </td>
-                <td data-colums-label="wednesday" class="data-cell">
-                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
-                    data-row-index={row}></lightning-input></div>
-                </td>
-                <td data-colums-label="thusday" class="data-cell">
-                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
-                    data-row-index={row}></lightning-input></div>
-                </td>
-                <td data-colums-label="friday" class="data-cell">
-                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
-                    data-row-index={row}></lightning-input></div>
-                </td>
-                <td data-colums-label="saturday" class="data-cell">
-                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
-                    data-row-index={row}></lightning-input></div>
-                </td>
-                <td data-colums-label="sunday" class="data-cell">
-                  <div class=""><lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
-                    data-row-index={row}></lightning-input></div>
-                </td> -->
-                <td data-colums-label="status" class="data-cell">
-                  <div class="" title="">
-                    <lightning-combobox value={valueStatus}
-                      options={optionsStatus} onchange={handleChangeStatus} ></lightning-combobox>
-                  </div>
-                </td>
-                <!-- <template for:each={row} for:item="day" for:index="cellIndex">
-                  <td key={day}>
-                      <lightning-input type="text" value={cell} onchange={handleInputChange} data-row-index={row}></lightning-input>
-                  </td>
+                <!-- <template for:each={weekdays} for:item="item">
+                  <th key={item} class="" scope="col">
+                    <div class="">{item}</div>
+                    <div class="">getObjectDataValue(key)</div>
+                  </th>
                 </template> -->
+                <template for:each={objectDataEntries} for:item="item">
+                  <th class="column" key={item.key} scope="col">
+                    <p>{item.key}</p>
+                    <p>{item.value}</p>
+                  </th>
+                </template>
+                <th class="column" scope="col">
+                  <p class="">SUM</p>
+                </th>
+                <th class="column" scope="col">
+                  <p class="">STATUS</p>
+                </th>
               </tr>
-            </template>
-          </tbody>
-        </table>
-        <div>
-          <lightning-combobox class="custom-combobox" value={selectedValueRow} options={optionsRow} onchange={handleChangeRow} ></lightning-combobox>
+            </thead>
+            <tbody>
+              <template for:each={rows} for:item="row" for:index="index">
+                <tr key={row}>
+                  <td data-colums-label="projectId">
+                    <div>
+                      <c-lwc-custom-lookup object-name="Project__c" filter-field="Name" onselected={handleLookupProject} row-number={row}></c-lwc-custom-lookup> 
+                    </div>
+                  </td>
+                  <template for:each={objectDataEntries} for:item="item">
+                    <td key={item.key} data-colums-label={item.key} data-colums-date={item.value} class="data-cell">
+                      <!-- <lightning-input type="number" step="0.01" onchange={handleOnchangeInput}
+                        data-row-index={row}></lightning-input> -->
+                        <lightning-input type="number" step="0.01" onchange={handleChangeInput}
+                        pattern="^(([1-9]|1[0-5])(\.[0-9]{1,2})?)$|^16$" data-row-index={row}
+                        message-when-pattern-mismatch="Giá trị phải từ 0 đến 16"></lightning-input>
+                    </td>
+                  </template>
+                  <td data-colums-label="total" class="data-cell" style="background-color: cadetblue;"></td>
+                  <td data-colums-label="status" class="data-cell">
+                    <div class="" title="">
+                      <lightning-combobox value={valueStatus}
+                        options={optionsStatus} onchange={handleChangeStatus} ></lightning-combobox>
+                    </div>
+                  </td>
+                  <!-- <template for:each={row} for:item="day" for:index="cellIndex">
+                    <td key={day}>
+                        <lightning-input type="text" value={cell} onchange={handleInputChange} data-row-index={row}></lightning-input>
+                    </td>
+                  </template> -->
+                </tr>
+              </template>
+            </tbody>
+          </table>
         </div>
+      </div>
     </div>
   </div>
 </template>

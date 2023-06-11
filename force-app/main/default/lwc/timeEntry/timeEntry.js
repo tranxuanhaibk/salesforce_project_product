@@ -5,15 +5,13 @@ import getProjectList from '@salesforce/apex/TimeEntryController.getProjectList'
 
 export default class TimeEntry extends LightningElement {
   weekdays = {};
-  recordListParent = [];
-  recordidListParent = [];
-  dataValue;
+  dateValue;
   userId = '';
   valueInput;
   valueStatus = 'inProgress';
   objectData = {};
   selectedValueRow = 3;
-  dayObject = {'1':'monday', '2':'tuesday', '3':'webnesday'};
+  showDatePicker = false;
   weekDayKeys = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
   @track rows = [1, 2, 3];
 
@@ -29,7 +27,7 @@ export default class TimeEntry extends LightningElement {
     return [
       { label: '3', value: 3 },
       { label: '5', value: 5 },
-      { label: '10', value: 10 },
+      { label: '7', value: 7 },
     ];
   }
 
@@ -38,30 +36,27 @@ export default class TimeEntry extends LightningElement {
   connectedCallback() {
     registerListener('parentPublisher', this.handleGetUserId, this);
     this.getWeekDays(new Date());
-    this.dataValue = this.convertFormatDate(new Date());
-    console.log('dataValue , ', this.dataValue);
+    this.dateValue = this.convertFormatDate(new Date());
+    console.log('this.dateValue ',this.dateValue);
+    // console.log('dateValue , ', this.dateValue);
   }
 
   handleGetUserId(data) {
     this.userId = data;
-    this.recordListParent = getProjectList({
-      userId: this.userId
-    }).then(data => {
-      if (data) {
-        return data;
-      }
-    }).catch(error => {
-      console.log('error ', error);
-    });
   }
 
-  getWeekDays(today) {
-    const currentDay = today.getDay();
-    const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - currentDay);
+  getWeekDays(dateInput) {
+    let currentDay = dateInput.getDay();
+    if (currentDay == 0) {
+      // indexOfSunday
+      currentDay = 7;
+    }
+    console.log('currentDay ', currentDay);
+    const startOfWeek = new Date(dateInput.getFullYear(), (dateInput.getMonth() + 1), dateInput.getDate() - (currentDay - 1));
+    console.log('startOfWeek ', startOfWeek);
     for (let i = 0; i < 7; i++) {
-      const day = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + i);
-      this.weekdays[this.weekDayKeys[i]] = day.getDate() + '/' + day.getMonth();
-      console.log('this.weekdays ', this.weekdays);
+      const date = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + i);
+      this.weekdays[this.weekDayKeys[i]] = date.getDate() + '/' + (date.getMonth());
     }
   }
 
@@ -71,7 +66,40 @@ export default class TimeEntry extends LightningElement {
   }
 
   convertFormatDate(date) {
-    return date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+    // date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-`;
+  }
+  toggleDatePicker() {
+    this.showDatePicker = !this.showDatePicker;
+  }
+
+  handleDatePickerSelect(event) {
+    const selectedDate = event.detail.value;
+    this.dateValue = selectedDate;
+    this.showDatePicker = false;
+  }
+  
+  handleDateChange(event) {
+    this.dateValue = event.target.value;
+    this.getWeekDays(new Date(this.dateValue));
+  }
+
+  handlePreviousWeek() {
+    var dateInstance = new Date(this.dateValue);
+    this.dateValue = new Date(dateInstance.setDate(dateInstance.getDate() - 7));
+    console.log('dateInstance ', dateInstance);
+    console.log('dateValue', this.dateValue);
+    this.getWeekDays(this.dateValue);
+    this.dateValue = this.convertFormatDate(this.dateValue);
+  }
+
+  handleNextWeek() {
+    var dateInstance = new Date(this.dateValue);
+    this.dateValue = new Date(dateInstance.setDate(dateInstance.getDate() + 7));
+    console.log('dateInstance ', dateInstance);
+    console.log('dateValue', this.dateValue);
+    this.getWeekDays(this.dateValue);
+    this.dateValue = this.convertFormatDate(this.dateValue);
   }
 
   handleLookupProject(event) {
@@ -86,14 +114,22 @@ export default class TimeEntry extends LightningElement {
     // todo
   }
 
-  handleOnchangeInput(event) {
+  handleChangeInput(event) {
     this.valueInput = event.detail.value;
     const {dataset} = event.target;
     const rowIndex = dataset.rowIndex;
     const tdElement = event.target.closest('td');
     const columnsLabel = tdElement.getAttribute('data-colums-label');
     const columnsDate = tdElement.getAttribute('data-colums-date');
-
+    const pattern = /^(([1-9]|1[0-5])(\.[0-9]{1,2})?)$|^16$/;
+    console.log('pattern.test(inputValue) ', pattern.test(this.valueInput));
+    if (pattern.test(this.valueInput)) {
+      this.updateObjectData(this.objectData, rowIndex, columnsLabel, this.valueInput);
+      let totalRow = this.handleCalculateRowSum(rowIndex, this.objectData);
+      const tableRows = this.template.querySelectorAll('tbody tr');
+      const tableRowIndex = parseInt(rowIndex) - 1;
+      tableRows[tableRowIndex].childNodes[8].innerHTML = totalRow;
+    }
     // const tableRows = this.template.querySelectorAll('tbody tr');
     // tableRows[0].childNodes[5].innerHTML = 3;
     // console.log('dataset.columnsLabel ',columnsLabel);
@@ -101,11 +137,11 @@ export default class TimeEntry extends LightningElement {
     // console.log('dataset.rowIndex ', rowIndex);
     // console.log('this.valueInput ', this.valueInput);
 
-    this.updateObjectData(this.objectData, rowIndex, columnsLabel, this.valueInput);
-    let totalRow = this.handleCalculateRowSum(rowIndex, this.objectData);
-    const tableRows = this.template.querySelectorAll('tbody tr');
-    const tableRowIndex = parseInt(rowIndex) - 1;
-    tableRows[tableRowIndex].childNodes[8].innerHTML = totalRow;
+    // this.updateObjectData(this.objectData, rowIndex, columnsLabel, this.valueInput);
+    // let totalRow = this.handleCalculateRowSum(rowIndex, this.objectData);
+    // const tableRows = this.template.querySelectorAll('tbody tr');
+    // const tableRowIndex = parseInt(rowIndex) - 1;
+    // tableRows[tableRowIndex].childNodes[8].innerHTML = totalRow;
   }
 
   handleCalculateRowSum(rowIndex, objectOriginal) {
@@ -126,9 +162,12 @@ export default class TimeEntry extends LightningElement {
 
   handleChangeRow(event) {
     this.selectedValueRow = +event.detail.value;
-    console.log('selectedValueRow ', selectedValueRow);
-    if (selectedValueRow == 5) {
+    if (this.selectedValueRow == 3) {
+      this.rows = [1, 2, 3];
+    } else if (this.selectedValueRow == 5){
       this.rows = [1, 2, 3, 4, 5];
+    } else {
+      this.rows = [1, 2, 3, 4, 5, 6, 7];
     }
   }
 
