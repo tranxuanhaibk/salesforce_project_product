@@ -2,6 +2,8 @@ import { LightningElement, track, wire } from 'lwc';
 import { registerListener, unregisterAllListeners } from 'c/pubsub'; 
 import { CurrentPageReference } from 'lightning/navigation';
 import getProjectAssignment from '@salesforce/apex/TimeEntryController.getProjectAssignment';
+import createTimeCard from '@salesforce/apex/TimeEntryController.createTimeCard';
+import createTimeCardSplit from '@salesforce/apex/TimeEntryController.createTimeCardSplit';
 
 export default class TimeEntry extends LightningElement {
   weekdays = {};
@@ -12,7 +14,9 @@ export default class TimeEntry extends LightningElement {
   objectData = {};
   selectedValueRow = 3;
   showDatePicker = false;
-  weekDayKeys = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+  messageResult = false;
+  weekDayKeys = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+  weekDayForInsert = {};
   @track rows = [];
 
   projectAssignmentObject = [];
@@ -28,8 +32,7 @@ export default class TimeEntry extends LightningElement {
   get optionsRow() {
     return [
       { label: '3', value: 3 },
-      { label: '5', value: 5 },
-      { label: '7', value: 7 },
+      { label: '5', value: 5 }
     ];
   }
 
@@ -40,9 +43,9 @@ export default class TimeEntry extends LightningElement {
     this.getWeekDays(new Date());
     this.dateValue = this.convertFormatDate(new Date());
     this.rows = [
-      { id: 1, selectedValue: '', showSearchedValues: false},
-      { id: 2, selectedValue: '', showSearchedValues: false},
-      { id: 3, selectedValue: '', showSearchedValues: false}
+      { id: 1, selectedValue: '', showSearchedValues: false, isNotData: false, isDisable: true},
+      { id: 2, selectedValue: '', showSearchedValues: false, isNotData: false, isDisable: true},
+      { id: 3, selectedValue: '', showSearchedValues: false, isNotData: false, isDisable: true}
     ];
     console.log('this.rows ',this.rows);
   }
@@ -53,28 +56,38 @@ export default class TimeEntry extends LightningElement {
 
   handleBlur(event) {
     const rowIndex = event.target.dataset.rowIndex;
-    this.rows[selectedIndex].showSearchedValues = false;
+    const projectName = event.target.dataset.label;
+    this.rows[rowIndex - 1].isNotData = false;
+    this.rows[rowIndex - 1].showSearchedValues = false;
+    this.rows[rowIndex - 1].selectedValue = projectName ? projectName : '';
+    console.log('handleBlur ', this.rows);
   }
 
   handleFocus(event) {
     const rowIndex = event.target.dataset.rowIndex;
-    console.log(' rowIndex', rowIndex);
     getProjectAssignment({
       userId: this.userId
     }).then((result) => {
-      console.log(' result ', result);
-      this.projectAssignmentObject = result;
-      console.log(' this.projectAssignmentObject time ',  this.projectAssignmentObject);
-    });
-    this.rows.forEach((row, index) => {
-      console.log('index', index);
-      if ((index + 1) == rowIndex) {
-        row.showSearchedValues = true;
+      if (result.length > 0) {
+        this.projectAssignmentObject = result;
+        this.rows.forEach((row, index) => {
+          if ((index + 1) == rowIndex) {
+            row.showSearchedValues = true;
+          } else {
+            row.showSearchedValues = false;
+          }
+        });
       } else {
-        row.showSearchedValues = false;
+        this.rows.forEach((row, index) => {
+          if ((index + 1) == rowIndex) {
+            row.isNotData = true;
+          } else {
+            row.isNotData = false;
+          }
+        });
       }
     });
-    console.log(' this.rows', this.rows);
+    console.log('handleFocus ', this.rows);
   }
 
   getWeekDays(dateInput) {
@@ -87,8 +100,9 @@ export default class TimeEntry extends LightningElement {
     const startOfWeek = new Date(dateInput.getFullYear(), (dateInput.getMonth() + 1), dateInput.getDate() - (currentDay - 1));
     console.log('startOfWeek ', startOfWeek);
     for (let i = 0; i < 7; i++) {
-      const date = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + i);
-      this.weekdays[this.weekDayKeys[i]] = date.getDate() + '/' + (date.getMonth());
+      const dateOfWeek = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + i);
+      this.weekdays[this.weekDayKeys[i]] = dateOfWeek.getDate() + '/' + dateOfWeek.getMonth() + '/' + dateOfWeek.getFullYear();
+      this.weekDayForInsert[this.weekDayKeys[i]] = dateOfWeek.getFullYear() + '-' + dateOfWeek.getMonth() + '-' + dateOfWeek.getDate();
     }
   }
 
@@ -142,19 +156,45 @@ export default class TimeEntry extends LightningElement {
     this.updateObjectData(this.objectData, rowIndex, 'projectId', projectId);
   }
 
-  handleSaveData() {
-    // todo
+  async handleSaveData() {
+    const weeknumber = this.getWeekNumber(this.dateValue);
+    const projectAssignmentMap = await createTimeCard({
+      objectTimeCard : this.objectData,
+      weekNumber : weeknumber
+    }).then((result) => {
+      if (result.length > 0) {
+        console.log('createTimeCard ', result);
+      }
+    }).catch((error) => {
+      console.log('createTimeCard error ', error);
+    });
+
+    await createTimeCardSplit({
+      objectTimeCardSplit : this.objectData,
+      weekDayForInsertObject : weekDayForInsert,
+      projectAssignmentIdMap : projectAssignmentMap
+    }).then((result) => {
+      if (result.length > 0) {
+        console.log('createTimeCardSplit ', result);
+      }
+    }).catch((error) => {
+      console.log('createTimeCardSplit error ', error);
+    });
   }
 
   handleClickProjectAssignment(event) {
     console.log(' this.rows 12311 ');
-    const selectedValue1 = event.target.dataset.label;
+    const projectName = event.target.dataset.label;
+    const projectAssignmentId = event.target.dataset.value;
     const selectedIndex = event.target.dataset.rowIndex;
-    console.log(' selectedValue ',  selectedValue1);
+    console.log(' projectAssignmentId ',  projectAssignmentId);
     console.log(' selectedIndex ',  selectedIndex);
-    this.rows[selectedIndex].selectedValue = selectedValue1;
+    this.rows[selectedIndex].selectedValue = projectName;
     this.rows[selectedIndex].showSearchedValues = false;
-    console.log(' this.rows ',  this.rows);
+    this.rows[selectedIndex].isDisable = false;
+    this.updateObjectData(this.objectData, parseInt(selectedIndex) + 1, 'projectAssignmentId', projectAssignmentId);
+    this.updateObjectData(this.objectData, parseInt(selectedIndex) + 1, 'projectName', projectName);
+    console.log(' handleClickProjectAssignment ',  this.rows);
   }
 
   handleChangeInput(event) {
@@ -206,20 +246,9 @@ export default class TimeEntry extends LightningElement {
   handleChangeRow(event) {
     this.selectedValueRow = +event.detail.value;
     if (this.selectedValueRow == 3) {
-      this.rows =  [
-        { id: 1, name: 'Row 1' },
-        { id: 2, name: 'Row 2' },
-        { id: 3, name: 'Row 3' }];
-    } else if (this.selectedValueRow == 5){
-      this.rows =  [
-        { id: 1, name: 'Row 1' },
-        { id: 2, name: 'Row 2' },
-        { id: 3, name: 'Row 3' }];
+      console.log(' handleChangeRow ', this.rows.length);
     } else {
-      this.rows =  [
-        { id: 1, name: 'Row 1' },
-        { id: 2, name: 'Row 2' },
-        { id: 3, name: 'Row 3' }];
+      console.log(' handleChangeRow ', this.rows.length);
     }
   }
 
@@ -237,5 +266,14 @@ export default class TimeEntry extends LightningElement {
     }
 
     this.objectData[rowIndex][columnsLabel] = valueInput;
+  }
+
+  getWeekNumber(dateInput) {
+    let currentDate = new Date(dateInput);
+    let startDate = new Date(currentDate.getFullYear(), 0, 1);
+    var days = Math.floor((currentDate - startDate) /
+        (24 * 60 * 60 * 1000));
+    var weekNumber = Math.ceil(days / 7);
+    return weekNumber;
   }
 }
