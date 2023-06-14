@@ -186,7 +186,7 @@ export default class TimeEntry extends LightningElement {
       projectAssignmentIdMap : projectAssignmentMap
     }).then((result) => {
       if (result.length > 0) {
-        this.showToast('Thành Công', 'Bạn đã lưu thành công', 'success');
+        this.showCustomToast('Thành Công', 'Bạn đã lưu thành công', 'success');
         console.log('createTimeCardSplit ', result);
       }
     }).catch((error) => {
