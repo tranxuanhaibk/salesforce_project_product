@@ -1,0 +1,32 @@
+.custom-combobox {
+    width: 100%;
+}
+
+.container {
+    max-width: 100%;
+}
+  
+.table-wrapper {
+    overflow-x: auto;
+    display: inline-block;
+}
+
+.slds-table {
+    width: 100%;
+}
+
+.slds-table .column {
+    padding-left: 50px;
+    padding-right: 50px;
+    text-align: center;
+}
+
+.data-cell {
+    text-align: center;
+}
+
+.slds-dropdown-trigger.slds-dropdown-trigger_click.slds-size_1-of-1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

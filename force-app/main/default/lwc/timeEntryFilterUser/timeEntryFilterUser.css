@@ -1,0 +1,26 @@
+.customLookup {
+    width: 200px;
+    padding: 5px;
+}
+
+/* .slds-col {
+    padding: 5px;
+} */
+
+.body-container {
+    display: flex;
+  }
+  
+.body-container .colum {
+    display: flex;
+    margin-right: 200px;
+    margin-left: 20px;
+}
+
+.body-container .colum2 {
+    margin-left: 800px;
+}
+
+.body-container .colum .slds-col {
+    margin-right: 5px;
+}

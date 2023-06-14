@@ -1,0 +1,19 @@
+<template>
+    <template if:true={showModal}>
+        <div class="backdrop" onclick={closeModal}></div>
+        <div class={modalClass}>
+            <header class="slds-modal__header">
+                <lightning-icon icon-name={modalIconName} alternative-text="Icon"></lightning-icon>
+                <h2 class="slds-text-heading_medium slds-modal__title">{modalTitle}</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium">
+                <template for:each={errorMessages} for:item="msg" for:index="index">
+                    <h3 key={msg}>{msg}</h3>
+                </template>
+            </div>
+            <footer class="slds-modal__footer">
+                <lightning-button label="Đóng" onclick={closeModal}></lightning-button>
+            </footer>
+        </div>
+    </template>
+</template>

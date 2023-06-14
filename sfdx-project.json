@@ -5,7 +5,7 @@
       "default": true
     }
   ],
-  "name": "PrọectManage",
+  "name": "ProjectManage",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "55.0"
