@@ -40,9 +40,6 @@ public with sharing class TimeEntryController {
     @AuraEnabled
     public static List<Time_Card_Split__c> createTimeCardSplit(Map<Integer, Map<String, String>> objectTimeCardSplit,
         Map<String, String> weekDayForInsertObject, Map<String, String> projectAssignmentIdMap) {
-            System.debug('objectTimeCardSplit '+ objectTimeCardSplit);
-            System.debug('weekDayForInsertObject '+ weekDayForInsertObject);
-            System.debug('projectAssignmentIdMap '+ projectAssignmentIdMap);
         List<Time_Card_Split__c> timeCardSplitList = new List<Time_Card_Split__c>();
         if (!objectTimeCardSplit.isEmpty() && !projectAssignmentIdMap.isEmpty()) {
             List<Time_Card__c> timeCardList = [SELECT Id, Name, Project_Assignment__c, Project_Name__c FROM Time_Card__c WHERE Project_Assignment__c IN :projectAssignmentIdMap.keySet()];
@@ -50,20 +47,12 @@ public with sharing class TimeEntryController {
             for (Time_Card__c timeCard : timeCardList) {
                 for (Integer index : objectTimeCardSplit.keySet()) {
                     Map<String, String> dataMap = objectTimeCardSplit.get(index);
-                    System.debug('create ========= 12233' + timeCard.id);
-                    System.debug('create ========= 123323233' + dataMap.containsKey('projectName'));
-                    System.debug('create ========= 1233323344' + dataMap.containsKey('projectAssignmentId'));
-                    System.debug('create ========= 123332www3344' + String.isNotBlank(dataMap.get('projectName')));
                     for (String day : dataMap.keySet()) {
                         if (dataMap.containsKey('projectName') && dataMap.containsKey('projectAssignmentId') && String.isNotBlank(dataMap.get('projectName'))) {
-                            System.debug('create ========= 123');
-                            System.debug('create ========= 12333' + String.valueOf(timeCard.Project_Assignment__c).equals(dataMap.equals('projectAssignmentId')));
-                            System.debug('create ========= 1233344' + String.valueOf(timeCard.Name).equals(projectAssignmentIdMap.get(String.valueOf(timeCard.Project_Assignment__c))));
                             if (String.valueOf(timeCard.Project_Assignment__c).equals(dataMap.get('projectAssignmentId'))
                                 && String.valueOf(timeCard.Name).equals(projectAssignmentIdMap.get(String.valueOf(timeCard.Project_Assignment__c)))
                                 && !day.equals('projectName')
                                 && !day.equals('projectAssignmentId')) {
-                                System.debug('create ========= ');
                                 timeCardSplitList.add(
                                     new Time_Card_Split__c(
                                         Name = String.valueOf(timeCard.Name) + '_' + weekDayForInsertObject.get(day) ,
@@ -93,9 +82,6 @@ public with sharing class TimeEntryController {
         Time startTime = Time.newInstance(9, 0, 0, 0);
         Time endTime = startTime.addHours(hour);
         endTime = endTime.addMinutes(minutes);
-        // System.debug('hour' + hour);
-        // System.debug('minutes' + minutes);
-        // System.debug('endTime' + endTime);
         return endTime;
     }
 }
