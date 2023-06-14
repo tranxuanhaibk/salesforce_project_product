@@ -32,6 +32,7 @@ public with sharing class TimeEntryController {
                     mapTimeCard.put(dataMap.get('projectAssignmentId'), nameTimeCard);
                 }
             }
+            insert timeCardList;
         }
         return mapTimeCard;
     }

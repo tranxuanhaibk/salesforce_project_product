@@ -4,6 +4,7 @@ import { CurrentPageReference } from 'lightning/navigation';
 import getProjectAssignment from '@salesforce/apex/TimeEntryController.getProjectAssignment';
 import createTimeCard from '@salesforce/apex/TimeEntryController.createTimeCard';
 import createTimeCardSplit from '@salesforce/apex/TimeEntryController.createTimeCardSplit';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class TimeEntry extends LightningElement {
   weekdays = {};
@@ -14,6 +15,8 @@ export default class TimeEntry extends LightningElement {
   objectData = {};
   selectedValueRow = 3;
   showDatePicker = false;
+  contentMessageArray = [];
+  titleError = '';
   messageResult = false;
   weekDayKeys = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
   weekDayForInsert = {};
@@ -157,24 +160,33 @@ export default class TimeEntry extends LightningElement {
   }
 
   async handleSaveData() {
+    const valid = this.checkValidateObjectData(this.objectData);
+    if (!valid) {
+      return;
+    }
+
     const weeknumber = this.getWeekNumber(this.dateValue);
-    const projectAssignmentMap = await createTimeCard({
+    await createTimeCard({
       objectTimeCard : this.objectData,
       weekNumber : weeknumber
     }).then((result) => {
-      if (result.length > 0) {
+      if (Object.keys(result).length > 0) {
+        this.createTimeCardSplit(result);
         console.log('createTimeCard ', result);
       }
     }).catch((error) => {
       console.log('createTimeCard error ', error);
     });
+  }
 
+  async createTimeCardSplit(projectAssignmentMap) {
     await createTimeCardSplit({
       objectTimeCardSplit : this.objectData,
-      weekDayForInsertObject : weekDayForInsert,
+      weekDayForInsertObject : this.weekDayForInsert,
       projectAssignmentIdMap : projectAssignmentMap
     }).then((result) => {
       if (result.length > 0) {
+        this.showToast('Thành Công', 'Bạn đã lưu thành công', 'success');
         console.log('createTimeCardSplit ', result);
       }
     }).catch((error) => {
@@ -192,6 +204,7 @@ export default class TimeEntry extends LightningElement {
     this.rows[selectedIndex].selectedValue = projectName;
     this.rows[selectedIndex].showSearchedValues = false;
     this.rows[selectedIndex].isDisable = false;
+    this.rows[selectedIndex].isNotData = false;
     this.updateObjectData(this.objectData, parseInt(selectedIndex) + 1, 'projectAssignmentId', projectAssignmentId);
     this.updateObjectData(this.objectData, parseInt(selectedIndex) + 1, 'projectName', projectName);
     console.log(' handleClickProjectAssignment ',  this.rows);
@@ -213,18 +226,6 @@ export default class TimeEntry extends LightningElement {
       const tableRowIndex = parseInt(rowIndex) - 1;
       tableRows[tableRowIndex].childNodes[8].innerHTML = totalRow;
     }
-    // const tableRows = this.template.querySelectorAll('tbody tr');
-    // tableRows[0].childNodes[5].innerHTML = 3;
-    // console.log('dataset.columnsLabel ',columnsLabel);
-    // console.log('dataset.columnsDate ',columnsDate);
-    // console.log('dataset.rowIndex ', rowIndex);
-    // console.log('this.valueInput ', this.valueInput);
-
-    // this.updateObjectData(this.objectData, rowIndex, columnsLabel, this.valueInput);
-    // let totalRow = this.handleCalculateRowSum(rowIndex, this.objectData);
-    // const tableRows = this.template.querySelectorAll('tbody tr');
-    // const tableRowIndex = parseInt(rowIndex) - 1;
-    // tableRows[tableRowIndex].childNodes[8].innerHTML = totalRow;
   }
 
   handleCalculateRowSum(rowIndex, objectOriginal) {
@@ -235,7 +236,6 @@ export default class TimeEntry extends LightningElement {
         sum += parseFloat(objectOriginal[rowIndex][key]);
       }
     });
-    // console.log('sum of ' + rowIndex + ' ' + sum);
     return sum;
   }
 
@@ -275,5 +275,89 @@ export default class TimeEntry extends LightningElement {
         (24 * 60 * 60 * 1000));
     var weekNumber = Math.ceil(days / 7);
     return weekNumber;
+  }
+
+  showCustomToast(title, message, variant) {
+    const toast = new ShowToastEvent({
+      title: title,
+      message: message,
+      variant: variant,
+    });
+    this.dispatchEvent(toast);
+  }
+
+  checkValidateObjectData(objectData) {
+    console.log(' ============= ', objectData);
+    if (this.checkDuplicateProjectName(objectData)) {
+      this.showCustomToast('Lỗi', 'Không được trùng tên Project Assignment', 'error');
+      return false;
+    }
+
+    let weekDayKeysRequired = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
+    let errorMessageArray = [];
+    Object.keys(objectData).forEach(function(key) {
+      // if (objectData[key].hasOwnProperty('SATURDAY')) {
+      //   errorWarnningArray.push('Thứ 7 (' + objectData[key]['SATURDAY'] + ' giờ)');
+      // }
+
+      // if (objectData[key].hasOwnProperty('SUNDAY')) {
+      //   errorWarnningArray.push('Chủ nhật (' + objectData[key]['SUNDAY'] + ' giờ)');
+      // }
+
+      Object.keys(objectData[key]).forEach(function(day) {
+        if (weekDayKeysRequired.includes(day)) {
+          weekDayKeysRequired = weekDayKeysRequired.filter(function(value) {
+            return value != day;
+          });
+        }
+      });
+
+      if (weekDayKeysRequired.length > 0) {
+        let errorMessage = 'Hàng thứ ' + key + ' : Mục ';
+        errorMessage += weekDayKeysRequired.join(', ');
+        errorMessageArray.push(errorMessage);
+      }
+
+      // if (errorWarnningArray.length > 0) {
+      //   let errorMessage = 'Project Assigment: ' + objectData[key]['projectName'] + ' OT';
+      //   errorMessage += errorWarnningArray.join(', ') + '?';
+      //   errorWarnningArrayAll.push(errorMessage);
+      // }
+    });
+
+    if (errorMessageArray.length > 0) {
+      this.contentMessageArray = errorMessageArray;
+      this.titleError = 'Vui lòng nhập'
+      let custom = this.template.querySelector('c-show-custom-toast');
+      custom.showErrorModal();
+      return false;
+    }
+
+    // if (errorWarnningArrayAll.length > 0) {
+    //   this.contentMessageArray = errorWarnningArrayAll;
+    //   this.titleError = 'Nhắc nhở'
+    //   let custom = this.template.querySelector('c-show-custom-toast');
+    //   custom.showWarningModal();
+    // }
+    return true;
+  }
+
+  checkDuplicateProjectName(objectData) {
+    let projectNameSet = new Set();
+  
+    for (let key in objectData) {
+      if (objectData.hasOwnProperty(key)) {
+        let project = objectData[key];
+        let projectName = project.projectName;
+  
+        if (projectNameSet.has(projectName)) {
+          return true;
+        }
+  
+        projectNameSet.add(projectName);
+      }
+    }
+  
+    return false;
   }
 }
