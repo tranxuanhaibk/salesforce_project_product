@@ -1,17 +1,19 @@
 <template>
     <lightning-card>
         <div class="body-container">
-            <div class="colum">
-                <h3>Time Entry</h3>
-            </div>
+            <div class="column">
+                <h1 class="title">Time Entry</h1>
+                <lightning-icon icon-name="standard:timesheet_entry" alternative-text="Approved" title="Approved"></lightning-icon>
+              </div>
             <div class="colum colum2">
                 <div class="slds-col customLookup">
+                    <h1 style="padding-left:10px; font-weight: bold;">Please choose User</h1>
                     <c-lwc-custom-lookup object-name="User" filter-field="Name" onselected={handleFilter}
                     is-user="true"></c-lwc-custom-lookup>
                 </div>
-                <lightning-button class="slds-col" variant="brand" label="Copy From Previous Week" title="Save action" onclick={handleClick}></lightning-button>
+                <!-- <lightning-button class="slds-col" variant="brand" label="Copy From Previous Week" title="Save action" onclick={handleClick}></lightning-button>
                 <lightning-button class="slds-col" variant="brand" label="Save" title="Save action" onclick={handleClick}></lightning-button>
-                <lightning-button class="slds-col" variant="success" label="Submit" title="Submit action" onclick={handleClick}></lightning-button>
+                <lightning-button class="slds-col" variant="success" label="Submit" title="Submit action" onclick={handleClick}></lightning-button> -->
             </div>
         </div>
     </lightning-card>

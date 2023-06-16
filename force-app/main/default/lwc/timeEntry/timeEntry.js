@@ -3,6 +3,7 @@ import { registerListener, unregisterAllListeners } from 'c/pubsub';
 import { CurrentPageReference } from 'lightning/navigation';
 import getProjectAssignment from '@salesforce/apex/TimeEntryController.getProjectAssignment';
 import createTimeCard from '@salesforce/apex/TimeEntryController.createTimeCard';
+import checkExistTimeCard from '@salesforce/apex/TimeEntryController.checkExistTimeCard';
 import createTimeCardSplit from '@salesforce/apex/TimeEntryController.createTimeCardSplit';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
@@ -21,6 +22,7 @@ export default class TimeEntry extends LightningElement {
   weekDayKeys = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
   weekDayForInsert = {};
   dataMapTmp = {};
+  isDisableNextWWeek = true;
   @track rows = [];
 
   projectAssignmentObject = [];
@@ -52,6 +54,17 @@ export default class TimeEntry extends LightningElement {
       { id: 3, selectedValue: '', showSearchedValues: false, isNotData: false, isDisable: true}
     ];
     console.log('this.rows ',this.rows);
+  }
+
+  renderedCallback() {
+    console.log('-----------------renderedCallback-----------------------');
+    let weekNumberClick = this.getWeekNumber(this.dateValue);
+    let weekNumberToday = this.getWeekNumber(new Date());
+    if (weekNumberClick >= weekNumberToday) {
+      this.isDisableNextWWeek = true;
+    } else {
+      this.isDisableNextWWeek = false;
+    }
   }
 
   handleGetUserId(data) {
@@ -118,15 +131,15 @@ export default class TimeEntry extends LightningElement {
     // date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   }
-  toggleDatePicker() {
-    this.showDatePicker = !this.showDatePicker;
-  }
+  // toggleDatePicker() {
+  //   this.showDatePicker = !this.showDatePicker;
+  // }
 
-  handleDatePickerSelect(event) {
-    const selectedDate = event.detail.value;
-    this.dateValue = selectedDate;
-    this.showDatePicker = false;
-  }
+  // handleDatePickerSelect(event) {
+  //   const selectedDate = event.detail.value;
+  //   this.dateValue = selectedDate;
+  //   this.showDatePicker = false;
+  // }
   
   handleDateChange(event) {
     this.dateValue = event.target.value;
@@ -136,8 +149,6 @@ export default class TimeEntry extends LightningElement {
   handlePreviousWeek() {
     var dateInstance = new Date(this.dateValue);
     this.dateValue = new Date(dateInstance.setDate(dateInstance.getDate() - 7));
-    console.log('dateInstance ', dateInstance);
-    console.log('dateValue', this.dateValue);
     this.getWeekDays(this.dateValue);
     this.dateValue = this.convertFormatDate(this.dateValue);
   }
@@ -151,32 +162,53 @@ export default class TimeEntry extends LightningElement {
     this.dateValue = this.convertFormatDate(this.dateValue);
   }
 
-  handleLookupProject(event) {
-    let projectId = event.detail;
-    const rowIndex = event.target.rowNumber;
-    console.log('objectData ', rowIndex);
+  // handleLookupProject(event) {
+  //   let projectId = event.detail;
+  //   const rowIndex = event.target.rowNumber;
+  //   console.log('objectData ', rowIndex);
 
-    this.updateObjectData(this.objectData, rowIndex, 'projectId', projectId);
-  }
+  //   this.updateObjectData(this.objectData, rowIndex, 'projectId', projectId);
+  // }
 
   async handleSaveData() {
     const valid = this.checkValidateObjectData(this.objectData);
     if (!valid) {
       return;
     }
-
     const weeknumber = this.getWeekNumber(this.dateValue);
-    await createTimeCard({
+    const timeCardMap = await checkExistTimeCard({
       objectTimeCard : this.objectData,
       weekNumber : weeknumber
-    }).then((result) => {
-      if (Object.keys(result).length > 0) {
-        this.createTimeCardSplit(result);
-        console.log('createTimeCard ', result);
-      }
-    }).catch((error) => {
+    }).then((result) => { return result;})
+    .catch((error) => { 
       console.log('createTimeCard error ', error);
+      return;
     });
+
+    if (timeCardMap) {
+      let projectAssignmentName = [];
+      Object.keys(timeCardMap).forEach(function(timeCardId) {
+        projectAssignmentName.push(timeCardMap[timeCardId]);
+      });
+
+      console.log('timeCardMap ', timeCardMap);
+      this.showCustomToast('Đã tồn tại Time Card',
+        'Project Assignment : ' + projectAssignmentName.join(', ') + ' đã được tạo trong tuần này'
+        , 'error');
+      return;
+    } else {
+      await createTimeCard({
+        objectTimeCard : this.objectData,
+        weekNumber : weeknumber
+      }).then((result) => {
+        if (Object.keys(result).length > 0) {
+          this.createTimeCardSplit(result);
+          console.log('createTimeCard ', result);
+        }
+      }).catch((error) => {
+        console.log('createTimeCard error ', error);
+      });
+    }
   }
 
   async createTimeCardSplit(projectAssignmentMap) {
@@ -195,12 +227,9 @@ export default class TimeEntry extends LightningElement {
   }
 
   handleClickProjectAssignment(event) {
-    console.log(' this.rows 12311 ');
     const projectName = event.target.dataset.label;
     const projectAssignmentId = event.target.dataset.value;
     const selectedIndex = event.target.dataset.rowIndex;
-    console.log(' projectAssignmentId ',  projectAssignmentId);
-    console.log(' selectedIndex ',  selectedIndex);
     this.rows[selectedIndex].selectedValue = projectName;
     this.rows[selectedIndex].showSearchedValues = false;
     this.rows[selectedIndex].isDisable = false;
@@ -284,21 +313,21 @@ export default class TimeEntry extends LightningElement {
   //   if (confirmDelete) {
   //     const index = this.rows.findIndex((row) => row.id === rowId);
   //     if (index !== -1) {
-  //       delete this.dataMapTmp[rowId]; // Xóa dữ liệu đã nhập của hàng
+  //       delete this.dataMapTmp[rowId];
   //       this.rows.splice(index, 1);
-  //       this.rearrangeRowIds(); // Sắp xếp lại các id sau khi xóa hàng
+  //       this.rearrangeRowIds();
   //     }
   //   }
   // }
 
   // rearrangeRowIds() {
-  //   const newDataMap = {}; // Lưu trữ dữ liệu đã nhập mới
+  //   const newDataMap = {};
   //   this.rows.forEach((row, index) => {
-  //     const rowData = this.dataMapTmp[row.id]; // Lấy dữ liệu đã nhập của hàng cũ
+  //     const rowData = this.dataMapTmp[row.id];
   //     row.id = index + 1;
-  //     newDataMap[row.id] = rowData; // Lưu trữ dữ liệu đã nhập của hàng mới
+  //     newDataMap[row.id] = rowData;
   //   });
-  //   this.dataMapTmp = { ...newDataMap }; // Gán lại dữ liệu đã nhập mới
+  //   this.dataMapTmp = { ...newDataMap };
   // }
 
   updateObjectData(objectOriginal, rowIndex, columnsLabel, valueInput) {

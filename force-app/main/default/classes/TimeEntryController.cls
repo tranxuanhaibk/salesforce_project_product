@@ -84,4 +84,30 @@ public with sharing class TimeEntryController {
         endTime = endTime.addMinutes(minutes);
         return endTime;
     }
+
+    @AuraEnabled
+    public static Map<String, String> checkExistTimeCard(Map<Integer, Map<String, String>> objectTimeCard, Integer weekNumber) {
+        Map<String, String> timeCardMap = new Map<String, String>();
+        if (!objectTimeCard.isEmpty()) {
+            List<String> nameTimeCardList = new List<String>();
+            for (Integer index : objectTimeCard.keySet()) {
+                if (objectTimeCard.get(index).containsKey('projectName')) {
+                    nameTimeCardList.add(
+                        objectTimeCard.get(index).get('projectName')
+                        + '_Week_' + String.valueOf(weekNumber)
+                    );
+                }
+            }
+
+            if (nameTimeCardList.size() > 0) {
+                List<Time_Card__c> timeCardList = [SELECT Id, Name, Project_Assignment__r.Name FROM Time_Card__c WHERE Name IN :nameTimeCardList];
+                if (timeCardList.size() > 0) {
+                    for (Time_Card__c timeCard : timeCardList) {
+                        timeCardMap.put((String) timeCard.id, timeCard.Project_Assignment__r.Name);
+                    }
+                }
+            }
+        }
+        return timeCardMap;
+    }
 }

@@ -12,21 +12,21 @@
         <lightning-card style="padding-left: 20px;">
           <lightning-layout>
             <lightning-layout-item  class="slds-size_2-of-12 slds-align_absolute-center">
-              <lightning-card>Week Ending</lightning-card>
+              <h2 style="width:85px; padding-top:18px; font-weight: bold;">Week Ending</h2>
             </lightning-layout-item>
             <lightning-layout-item class="slds-size_2-of-12 slds-align_absolute-center">
-              <lightning-button variant="brand" onclick={handlePreviousWeek} icon-name="utility:chevronleft"></lightning-button>
+              <lightning-button class="custom-input-container" variant="brand" onclick={handlePreviousWeek} icon-name="utility:chevronleft"></lightning-button>
             </lightning-layout-item>
             <lightning-layout-item class="slds-size_4-of-12 slds-align_absolute-center">
-              <lightning-input class="custom-input-container" type="date" value={dateValue} onchange={handleDateChange} date-style="short"></lightning-input>
+              <lightning-input type="date" value={dateValue} onchange={handleDateChange} date-style="short"></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item class="slds-size_2-of-12 slds-align_absolute-center">
+              <lightning-button class="custom-input-container" onclick={handleNextWeek} variant="brand" icon-name="utility:chevronright" disabled={isDisableNextWWeek}></lightning-button>
             </lightning-layout-item>
             <lightning-layout-item  class="slds-size_2-of-12 slds-align_absolute-center">
-              <lightning-button onclick={handleNextWeek} variant="brand" icon-name="utility:chevronright"></lightning-button>
+              <lightning-button class="custom-input-container" variant="brand" label="Save" onclick={handleSaveData}></lightning-button>
             </lightning-layout-item>
-            <lightning-layout-item  class="slds-size_2-of-12 slds-align_absolute-center">
-              <lightning-button variant="brand" label="Save" onclick={handleSaveData}></lightning-button>
-            </lightning-layout-item>
-            <lightning-layout-item  class="slds-size_2-of-12 slds-align_absolute-center">
+            <lightning-layout-item class="slds-size_2-of-12 slds-align_absolute-center">
               <lightning-combobox value={selectedValueRow} options={optionsRow} onchange={handleChangeRow}></lightning-combobox>
             </lightning-layout-item>
           </lightning-layout>
@@ -34,7 +34,7 @@
       </div>
       <div class="container">
         <div class="" style="position: fixed;">
-        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" style="width: 670px; padding-left: 20px;">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" style="width: 700px; border: 2px solid #00a1e0;">
             <thead>
               <tr class="slds-line-height_reset">
                 <th class="column" scope="col">
