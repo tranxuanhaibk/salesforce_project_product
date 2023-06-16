@@ -13,13 +13,14 @@ export default class TimeEntry extends LightningElement {
   valueInput;
   valueStatus = 'inProgress';
   objectData = {};
-  selectedValueRow = 3;
+  @track selectedValueRow = 3;
   showDatePicker = false;
   contentMessageArray = [];
   titleError = '';
   messageResult = false;
   weekDayKeys = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
   weekDayForInsert = {};
+  dataMapTmp = {};
   @track rows = [];
 
   projectAssignmentObject = [];
@@ -59,11 +60,10 @@ export default class TimeEntry extends LightningElement {
 
   handleBlur(event) {
     const rowIndex = event.target.dataset.rowIndex;
-    const projectName = event.target.dataset.label;
     this.rows[rowIndex - 1].isNotData = false;
-    this.rows[rowIndex - 1].showSearchedValues = false;
-    this.rows[rowIndex - 1].selectedValue = projectName ? projectName : '';
-    console.log('handleBlur ', this.rows);
+    setTimeout(() => {
+      this.rows[rowIndex - 1].showSearchedValues = false;
+    }, 8000);
   }
 
   handleFocus(event) {
@@ -244,13 +244,62 @@ export default class TimeEntry extends LightningElement {
   }
 
   handleChangeRow(event) {
-    this.selectedValueRow = +event.detail.value;
-    if (this.selectedValueRow == 3) {
-      console.log(' handleChangeRow ', this.rows.length);
-    } else {
-      console.log(' handleChangeRow ', this.rows.length);
+    const selectedValue = parseInt(event.detail.value);
+    if (selectedValue === 3 && this.rows.length === 5) {
+      if (Object.keys(this.objectData).length > 3) {
+        const confirmDelete = confirm('If you choose to display 3 rows, the content of rows 4 and 5 will be cleared. Do you want to proceed?');
+        if (confirmDelete) {
+          this.rows.splice(3);
+          delete this.objectData[4];
+          if (this.objectData[5]) {
+            delete this.objectData[5];
+          }
+        } else {
+          this.setValueToCombobox(5);
+          return;
+        }
+
+      } else {
+        this.rows.splice(3);
+      }
+    } else if (selectedValue === 5 && this.rows.length === 3) {
+      for (let i = 4; i <= 5; i++) {
+        this.rows.push({ id: i, selectedValue: '', showSearchedValues: false, isNotData: false, isDisable: true });
+      }
+    }
+    this.setValueToCombobox(selectedValue);
+    console.log('handleChangeRow ', this.objectData);
+  }
+
+  setValueToCombobox(value) {
+    const combobox = this.template.querySelector('lightning-combobox');
+    if (combobox) {
+      combobox.value = value;
     }
   }
+
+  // handleDeleteRow(event) {
+  //   const rowId = parseInt(event.target.dataset.rowIndex);
+  //   const confirmDelete = confirm('Bạn có chắc chắn muốn xóa hàng này?');
+  //   if (confirmDelete) {
+  //     const index = this.rows.findIndex((row) => row.id === rowId);
+  //     if (index !== -1) {
+  //       delete this.dataMapTmp[rowId]; // Xóa dữ liệu đã nhập của hàng
+  //       this.rows.splice(index, 1);
+  //       this.rearrangeRowIds(); // Sắp xếp lại các id sau khi xóa hàng
+  //     }
+  //   }
+  // }
+
+  // rearrangeRowIds() {
+  //   const newDataMap = {}; // Lưu trữ dữ liệu đã nhập mới
+  //   this.rows.forEach((row, index) => {
+  //     const rowData = this.dataMapTmp[row.id]; // Lấy dữ liệu đã nhập của hàng cũ
+  //     row.id = index + 1;
+  //     newDataMap[row.id] = rowData; // Lưu trữ dữ liệu đã nhập của hàng mới
+  //   });
+  //   this.dataMapTmp = { ...newDataMap }; // Gán lại dữ liệu đã nhập mới
+  // }
 
   updateObjectData(objectOriginal, rowIndex, columnsLabel, valueInput) {
     if (Object.keys(objectOriginal).length > 0) {

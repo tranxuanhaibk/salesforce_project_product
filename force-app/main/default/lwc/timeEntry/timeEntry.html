@@ -31,39 +31,15 @@
             </lightning-layout-item>
           </lightning-layout>
         </lightning-card>
-          <!-- <div class="slds-grid slds-wrap slds-align_absolute-center">
-            <div class="slds-col">
-              <lightning-card>Week Ending</lightning-card>
-            </div>
-            <div class="slds-col">
-              <lightning-button variant="brand" onclick={handlePreviousWeek} icon-name="utility:chevronleft"></lightning-button>
-            </div>
-            <div class="slds-col">
-              <lightning-input type="date" value={dateValue} onchange={handleDateChange} date-style="short" style="width: 200px; height:70px"></lightning-input>
-            </div>
-            <div class="slds-col">
-                <lightning-button onclick={handleNextWeek} variant="brand" icon-name="utility:chevronright"></lightning-button>
-            </div>
-            <div class="slds-col">
-              <lightning-button variant="brand" label="Save" onclick={handleSaveData}></lightning-button>
-            </div>
-          </div> -->
-      <!-- </lightning-card> -->
       </div>
       <div class="container">
-        <div class="table-wrapper">
-        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-label="Example table of Opportunities with vertical borders">
+        <div class="" style="position: fixed;">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" style="width: 670px; padding-left: 20px;">
             <thead>
               <tr class="slds-line-height_reset">
                 <th class="column" scope="col">
                   <div class="">PROJECT/ASSIGNMENT</div>
                 </th>
-                <!-- <template for:each={weekdays} for:item="item">
-                  <th key={item} class="" scope="col">
-                    <div class="">{item}</div>
-                    <div class="">getObjectDataValue(key)</div>
-                  </th>
-                </template> -->
                 <template for:each={objectDataEntries} for:item="item">
                   <th class="column" key={item.key} scope="col">
                     <p>{item.key}</p>
@@ -73,9 +49,12 @@
                 <th class="column" scope="col" style="background-color: #D0CACA;">
                   <p class="">TOTAL WORK HOUR</p>
                 </th>
-                <th class="column" scope="col">
+                <!-- <th class="column" scope="col">
+                  <p class="">ACTION</p>
+                </th> -->
+                <!-- <th class="column" scope="col">
                   <p class="">STATUS</p>
-                </th>
+                </th> -->
               </tr>
             </thead>
             <tbody>
@@ -85,7 +64,7 @@
                     <div class="slds-m-bottom_none slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
                       <lightning-input type="text"
                           onfocus={handleFocus} aria-activedescendant="option1" value={row.selectedValue}
-                          aria-autocomplete="list" aria-controls="listbox-id-12" role="textbox" data-row-index={row.id}
+                          aria-autocomplete="list" aria-controls="listbox-id-12" role="textbox" data-row-index={row.id} onblur={handleBlur}
                           placeholder="Search..."></lightning-input>
                       <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right searchButtonStyle"
                         title="Remove selected option" style="margin-top: 5px">
@@ -96,10 +75,10 @@
                     </div>
                     <div style="position: absolute;">
                       <template if:true={row.showSearchedValues}>
-                        <div class="slds-box slds-theme_default" style="height: 130px; width: 200px; overflow-y: scroll; z-index: 2; position: absolute;">
-                          <ul class="" role="">
+                        <div class="slds-box slds-theme_default" style="height: 100px; width: 210px; overflow-y: scroll; z-index: 2; position: absolute;">
+                          <ul class="" role="" onfocus={handleBlur2}>
                             <template for:each={projectAssignmentObject} for:item="obj">
-                              <li class="slds-p-around_x-small" style="cursor: pointer;" key={obj.recId} onblur={handleBlur}
+                              <li class="slds-p-around_x-small" style="cursor: pointer;" key={obj.recId}
                                 data-value={obj.recId} data-row-index={index} onclick={handleClickProjectAssignment}
                                 data-label={obj.recName}>
                                 {obj.recName}
@@ -108,10 +87,10 @@
                           </ul>
                         </div>
                       </template>
-                    <template if:true={row.isNotData}>
-                      <div>No Result Found!</div>
-                    </template>
-                  </div>
+                      <template if:true={row.isNotData}>
+                        <div>No Result Found!</div>
+                      </template>
+                    </div>
                   </td>
                   <template for:each={objectDataEntries} for:item="item">
                     <td key={item.key} data-colums-label={item.key} data-colums-date={item.value} class="data-cell">
@@ -121,12 +100,16 @@
                     </td>
                   </template>
                   <td data-colums-label="total" class="data-cell" style="background-color: #D0CACA;"></td>
-                  <td data-colums-label="status" class="data-cell">
+                  <!-- <td key={row.id}>
+                    <lightning-button-icon icon-name="utility:delete" variant="border-filled" alternative-text="Delete"
+                      data-row-index={row.id} onclick={handleDeleteRow}></lightning-button-icon>
+                  </td> -->
+                  <!-- <td data-colums-label="status" class="data-cell">
                     <div class="" title="">
                       <lightning-combobox value={valueStatus}
                         options={optionsStatus} onchange={handleChangeStatus} ></lightning-combobox>
                     </div>
-                  </td>
+                  </td> -->
                   <!-- <template for:each={row} for:item="day" for:index="cellIndex">
                     <td key={day}>
                         <lightning-input type="text" value={cell} onchange={handleInputChange} data-row-index={row}></lightning-input>
