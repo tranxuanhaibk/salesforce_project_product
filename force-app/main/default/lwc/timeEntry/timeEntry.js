@@ -184,8 +184,9 @@ export default class TimeEntry extends LightningElement {
       console.log('createTimeCard error ', error);
       return;
     });
+    console.log('timeCardMap ========', timeCardMap);
 
-    if (timeCardMap) {
+    if (Object.keys(timeCardMap).length > 0) {
       let projectAssignmentName = [];
       Object.keys(timeCardMap).forEach(function(timeCardId) {
         projectAssignmentName.push(timeCardMap[timeCardId]);
@@ -193,7 +194,7 @@ export default class TimeEntry extends LightningElement {
 
       console.log('timeCardMap ', timeCardMap);
       this.showCustomToast('Đã tồn tại Time Card',
-        'Project Assignment : ' + projectAssignmentName.join(', ') + ' đã được tạo trong tuần này'
+        'Project Assignment : ' + projectAssignmentName.join(', ') + ' đã được tạo trong tuần ' + weeknumber
         , 'error');
       return;
     } else {
@@ -219,6 +220,7 @@ export default class TimeEntry extends LightningElement {
     }).then((result) => {
       if (result.length > 0) {
         this.showCustomToast('Thành Công', 'Bạn đã lưu thành công', 'success');
+        window.location.reload();
         console.log('createTimeCardSplit ', result);
       }
     }).catch((error) => {
