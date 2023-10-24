@@ -1,0 +1,24 @@
+<template>
+    <lightning-card title="Manage List contact Quick Action">
+        <lightning-layout multiple-rows="true" vertical-align="end">
+           <div class="slds-m-around_medium">
+              <div class="slds-float_right">
+                 <lightning-button label="Create" onclick={createRecord} variant="brand"></lightning-button>
+              </div>
+              <div class="slds-float_center">
+               <lightning-button label="Send List Mail" onclick={handleSendBulkMail} variant="brand"></lightning-button>
+            </div>
+              <div class="slds-form-element__control">
+                 <lightning-input type="search" placeholder="Enter Search Value" onchange={handleSearch} value={handleSearch}>
+                 </lightning-input>
+              </div>
+              <div class="slds-box">
+                 <lightning-datatable data={contactData} columns={columns} key-field="Id" show-row-number-column="true"
+                 onrowselection={handleSelection}
+                 selected-rows={selectedRows}>
+                 </lightning-datatable>
+              </div>
+           </div>
+        </lightning-layout>
+     </lightning-card>
+</template>
