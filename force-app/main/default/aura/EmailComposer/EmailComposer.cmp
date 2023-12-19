@@ -1,0 +1,26 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="selectedRecipient" type="Object" />
+    <aura:attribute name="subject" type="String" />
+    <aura:attribute name="emailBody" type="String" />
+
+    <div style="background-color: white;">
+
+        <!-- Add the custom recipient lookup component -->
+        <div class="field-spacing">
+            <c:CustomRecipientLookup selectedRecipient="{!v.selectedRecipient}" />
+        </div>
+
+        <!-- Add spacing with CSS classes -->
+        <div class="field-spacing">
+            <lightning:input label="Subject" value="{!v.subject}" required="true" />
+        </div>
+
+        <div class="field-spacing">
+            <lightning:textarea label="Email Body" value="{!v.emailBody}" />
+        </div>
+
+        <lightning:button label="Send Email" onclick="{!c.sendEmail}" class="slds-button slds-button_brand" />
+
+    </div>
+</aura:component>
+

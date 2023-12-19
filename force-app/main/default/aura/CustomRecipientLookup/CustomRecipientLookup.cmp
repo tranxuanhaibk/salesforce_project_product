@@ -1,0 +1,18 @@
+<aura:component controller="EmailComposerController">
+    <aura:attribute name="selectedRecipient" type="Object" />
+    <aura:attribute name="searchTerm" type="String" />
+    <aura:attribute name="searchResults" type="Object[]" />
+
+    <div class="slds-form-element">
+        <input type="text" aura:id="lookupInput" placeholder="Search for a recipient" onkeyup="{!c.searchRecipients}" />
+        <ul aura:id="lookupResults" class="slds-dropdown slds-dropdown_fluid">
+            <aura:iteration items="{!v.searchResults}" var="result">
+                <li>
+                    <a href="javascript:void(0);" data-recordId="{!result.Id}" onclick="{!c.selectRecipient}">
+                        {!result.Name}
+                    </a>
+                </li>
+            </aura:iteration>
+        </ul>
+    </div>
+</aura:component>
